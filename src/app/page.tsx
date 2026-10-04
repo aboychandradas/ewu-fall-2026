@@ -10,7 +10,7 @@ import {
   Clock3,
   MapPin,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import {
   academicEvents,
@@ -27,6 +27,8 @@ import {
   getNextAcademicEvent,
   getNextClass,
 } from "@/lib/schedule";
+
+import { useNow } from "@/lib/use-now";
 
 function formatToday(date: Date) {
   return new Intl.DateTimeFormat(
@@ -80,45 +82,55 @@ function formatCountdownTo(
 export default function Home() {
   const router = useRouter();
 
-  const [now, setNow] = useState(
-    () => new Date(),
-  );
-
-  useEffect(() => {
-    const timer = window.setInterval(
-      () => {
-        setNow(new Date());
-      },
-      30_000,
-    );
-
-    return () =>
-      window.clearInterval(timer);
-  }, []);
+  const now = useNow();
 
   const todayClasses = useMemo(
-    () => getClassesForDate(now),
-    [now],
-  );
+  () => (now ? getClassesForDate(now) : []),
+  [now],
+);
 
   const currentClass = useMemo(
-    () => getCurrentClass(now),
-    [now],
-  );
+  () => (now ? getCurrentClass(now) : null),
+  [now],
+);
 
   const nextClass = useMemo(
-    () => getNextClass(now),
+    () => (now ? getNextClass(now) : null),
     [now],
   );
 
   const nextEvent = useMemo(
-    () =>
-      getNextAcademicEvent(
-        academicEvents,
-        now,
-      ),
-    [now],
+  () =>
+    now
+      ? getNextAcademicEvent(
+          academicEvents,
+          now,
+        )
+      : null,
+  [now],
+);
+
+if (!now) {
+  return (
+    <div className="space-y-7 pb-3">
+      <div className="pt-3">
+        <div className="h-3 w-32 animate-pulse rounded-full bg-black/6" />
+
+        <div className="mt-3 h-4 w-44 animate-pulse rounded-full bg-black/6" />
+
+        <div className="mt-7 h-12 w-64 animate-pulse rounded-2xl bg-black/6" />
+
+        <div className="mt-3 h-4 w-40 animate-pulse rounded-full bg-black/6" />
+      </div>
+
+      <div className="h-56 animate-pulse rounded-4xl bg-black/6" />
+
+      <div className="h-36 animate-pulse rounded-[30px] bg-black/6" />
+
+      <div className="h-28 animate-pulse rounded-[30px] bg-black/6" />
+    </div>
   );
+}
 
   const status = currentClass
     ? "current"
