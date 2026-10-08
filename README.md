@@ -1,4 +1,12 @@
-EWU Fall 2026 — Information Studies Academic Companion
+# EWU Fall 2026 — Information Studies Academic Companion
+
+[![Live App](https://img.shields.io/badge/Live%20App-Vercel-black?logo=vercel)](https://ewu-fall-2026.vercel.app/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.3.8-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![PWA](https://img.shields.io/badge/PWA-offline--first-5A0FC8)](https://web.dev/progressive-web-apps/)
+
+> An iPhone-first academic companion PWA for Fall 2026, built with offline access, an interactive weekly routine, academic calendar, and an installed-app experience.
 
 An iPhone-first Progressive Web App (PWA) built for an East West University Information Studies student in Fall 2026.
 
