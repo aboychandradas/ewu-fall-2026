@@ -5,7 +5,7 @@ export const dynamic = "force-static";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "EWU Fall 2026 — Information Studies",
-    short_name: "EWU Fall 2026",
+    short_name: "9th-Sem.",
     description:
       "Academic companion for East West University Information Studies, Fall 2026.",
     start_url: "/",
@@ -17,9 +17,14 @@ export default function manifest(): MetadataRoute.Manifest {
 
     icons: [
       {
-        src: "/favicon.ico",
-        sizes: "any",
-        type: "image/x-icon",
+        src: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        src: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
       },
     ],
   };

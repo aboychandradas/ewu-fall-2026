@@ -17,7 +17,30 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "EWU Fall 2026",
+    title: "9th-Sem.",
+  },
+
+  icons: {
+    icon: [
+      {
+        url: "/icon-192.png",
+        type: "image/png",
+        sizes: "192x192",
+      },
+      {
+        url: "/icon-512.png",
+        type: "image/png",
+        sizes: "512x512",
+      },
+    ],
+
+    apple: [
+      {
+        url: "/apple-touch-icon.png",
+        type: "image/png",
+        sizes: "180x180",
+      },
+    ],
   },
 };
 

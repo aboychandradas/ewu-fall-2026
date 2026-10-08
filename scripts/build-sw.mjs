@@ -25,6 +25,18 @@ const {
 } = createSerwistRoute({
   additionalPrecacheEntries: [
     {
+      url: "/",
+      revision,
+    },
+    {
+      url: "/routine/",
+      revision,
+    },
+    {
+      url: "/calendar/",
+      revision,
+    },
+    {
       url: "/offline/",
       revision,
     },
