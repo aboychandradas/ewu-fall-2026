@@ -17,7 +17,7 @@ import {
   semesterInfo,
 } from "@/data/fall-2026";
 
-import ClassStatusCard from "@/components/home/class-status-card";
+import LiveStatusCard from "@/components/home/live-status-card";
 
 import {
   formatRelativeDate,
@@ -28,7 +28,7 @@ import {
   getNextClass,
 } from "@/lib/schedule";
 
-import { useNow } from "@/lib/use-now";
+import { useLiveNow } from "@/lib/use-live-now";
 
 function formatToday(date: Date) {
   return new Intl.DateTimeFormat(
@@ -42,8 +42,14 @@ function formatToday(date: Date) {
 }
 
 function getGreeting(hour: number) {
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
+  if (hour < 12) {
+    return "Good morning";
+  }
+
+  if (hour < 18) {
+    return "Good afternoon";
+  }
+
   return "Good evening";
 }
 
@@ -70,7 +76,8 @@ function formatCountdownTo(
     minutes / 60,
   );
 
-  const remainingMinutes = minutes % 60;
+  const remainingMinutes =
+    minutes % 60;
 
   if (remainingMinutes === 0) {
     return `${hours}h`;
@@ -79,84 +86,135 @@ function formatCountdownTo(
   return `${hours}h ${remainingMinutes}m`;
 }
 
+function getSemesterProgress(
+  now: Date,
+) {
+  const start =
+    new Date(
+      `${semesterInfo.startDate}T00:00:00`,
+    ).getTime();
+
+  const end =
+    new Date(
+      `${semesterInfo.endDate}T23:59:59`,
+    ).getTime();
+
+  const current = now.getTime();
+
+  if (current <= start) {
+    return 0;
+  }
+
+  if (current >= end) {
+    return 100;
+  }
+
+  return Math.round(
+    ((current - start) /
+      (end - start)) *
+      100,
+  );
+}
+
 export default function Home() {
   const router = useRouter();
 
-  const now = useNow();
+  const now = useLiveNow();
 
   const todayClasses = useMemo(
-  () => (now ? getClassesForDate(now) : []),
-  [now],
-);
+    () =>
+      now
+        ? getClassesForDate(now)
+        : [],
+    [now],
+  );
 
   const currentClass = useMemo(
-  () => (now ? getCurrentClass(now) : null),
-  [now],
-);
+    () =>
+      now
+        ? getCurrentClass(now)
+        : null,
+    [now],
+  );
 
   const nextClass = useMemo(
-    () => (now ? getNextClass(now) : null),
+    () =>
+      now
+        ? getNextClass(now)
+        : null,
     [now],
   );
 
   const nextEvent = useMemo(
-  () =>
-    now
-      ? getNextAcademicEvent(
-          academicEvents,
-          now,
-        )
-      : null,
-  [now],
-);
-
-if (!now) {
-  return (
-    <div className="space-y-7 pb-3">
-      <div className="pt-3">
-        <div className="h-3 w-32 animate-pulse rounded-full bg-black/6" />
-
-        <div className="mt-3 h-4 w-44 animate-pulse rounded-full bg-black/6" />
-
-        <div className="mt-7 h-12 w-64 animate-pulse rounded-2xl bg-black/6" />
-
-        <div className="mt-3 h-4 w-40 animate-pulse rounded-full bg-black/6" />
-      </div>
-
-      <div className="h-56 animate-pulse rounded-4xl bg-black/6" />
-
-      <div className="h-36 animate-pulse rounded-[30px] bg-black/6" />
-
-      <div className="h-28 animate-pulse rounded-[30px] bg-black/6" />
-    </div>
+    () =>
+      now
+        ? getNextAcademicEvent(
+            academicEvents,
+            now,
+          )
+        : null,
+    [now],
   );
-}
 
-  const status = currentClass
-    ? "current"
-    : nextClass &&
-        new Date(
-          nextClass.start,
-        ).getDate() === now.getDate() &&
-        new Date(
-          nextClass.start,
-        ).getMonth() === now.getMonth()
-      ? "next"
-      : "done";
+  const semesterProgress =
+    now
+      ? getSemesterProgress(now)
+      : 0;
 
-  const nextSession =
-    status === "current"
-      ? currentClass
-      : nextClass?.session ?? null;
+  if (!now) {
+    return (
+      <div className="space-y-7 pb-3">
+        <div className="pt-3">
+          <div className="h-3 w-32 animate-pulse rounded-full bg-black/6" />
+
+          <div className="mt-3 h-4 w-44 animate-pulse rounded-full bg-black/6" />
+
+          <div className="mt-7 h-12 w-64 animate-pulse rounded-2xl bg-black/6" />
+
+          <div className="mt-3 h-4 w-40 animate-pulse rounded-full bg-black/6" />
+        </div>
+
+        <div className="h-72 animate-pulse rounded-[32px] bg-black/6" />
+
+        <div className="h-36 animate-pulse rounded-[30px] bg-black/6" />
+
+        <div className="h-28 animate-pulse rounded-[30px] bg-black/6" />
+      </div>
+    );
+  }
+
+  const isCurrent = Boolean(
+    currentClass,
+  );
+
+  const isNextToday = Boolean(
+    !currentClass &&
+      nextClass &&
+      new Date(
+        nextClass.start,
+      ).toDateString() ===
+        now.toDateString(),
+  );
+
+  const status =
+    isCurrent
+      ? "current"
+      : isNextToday
+        ? "next"
+        : "done";
+
+  const session =
+    currentClass ??
+    nextClass?.session ??
+    null;
 
   const nextStart =
-    status === "current"
-      ? undefined
-      : nextClass?.start;
+    status === "next"
+      ? nextClass?.start
+      : undefined;
 
   return (
     <div className="space-y-7 pb-3">
-      {/* HEADER */}
       <motion.header
         initial={{
           opacity: 0,
@@ -167,15 +225,15 @@ if (!now) {
           y: 0,
         }}
         transition={{
-          duration: 0.5,
+          duration: 0.55,
           ease: "easeOut",
         }}
         className="pt-3"
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-neutral-400">
-              EWU · {semesterInfo.semester}
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-neutral-400">
+              East West University
             </p>
 
             <p className="mt-2 text-sm font-medium text-neutral-500">
@@ -183,34 +241,46 @@ if (!now) {
             </p>
           </div>
 
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/70 shadow-sm ring-1 ring-black/5">
-            <span className="text-sm font-semibold tracking-[-0.02em]">
-              EW
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/70 bg-white/70 shadow-sm backdrop-blur-xl">
+            <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-neutral-700">
+              9TH
             </span>
           </div>
         </div>
 
-        <h1 className="mt-7 text-[38px] font-semibold tracking-[-0.045em] text-neutral-950">
-          {getGreeting(now.getHours())}
+        <h1 className="mt-7 text-[39px] font-semibold tracking-[-0.055em] text-neutral-950">
+          {getGreeting(
+            now.getHours(),
+          )}
         </h1>
 
-        <p className="mt-1 text-[15px] text-neutral-500">
-          {formatToday(now)}
-        </p>
+        <div className="mt-1 flex items-center justify-between gap-4">
+          <p className="text-[15px] text-neutral-500">
+            {formatToday(now)}
+          </p>
+
+          <p className="shrink-0 font-mono text-sm font-semibold tabular-nums text-neutral-700">
+            {new Intl.DateTimeFormat(
+              "en-US",
+              {
+                hour: "numeric",
+                minute: "2-digit",
+              },
+            ).format(now)}
+          </p>
+        </div>
       </motion.header>
 
-      {/* MAIN STATUS */}
-      <ClassStatusCard
-  status={status}
-  session={nextSession}
-  now={now}
-  start={nextStart}
-  onOpenRoutine={() => {
-    router.push("/routine");
-  }}
-/>
+      <LiveStatusCard
+        status={status}
+        session={session}
+        now={now}
+        start={nextStart}
+        onOpenRoutine={() => {
+          router.push("/routine");
+        }}
+      />
 
-      {/* TODAY */}
       <section className="space-y-3">
         <motion.div
           initial={{
@@ -228,7 +298,7 @@ if (!now) {
           className="flex items-end justify-between px-1"
         >
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">
+            <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-neutral-400">
               Today
             </p>
 
@@ -239,15 +309,19 @@ if (!now) {
 
           <Link
             href="/routine/"
-            className="flex items-center gap-1 text-sm font-semibold text-neutral-500"
+            className="group flex items-center gap-1 text-sm font-semibold text-neutral-500 outline-none transition-colors hover:text-neutral-950 focus-visible:text-neutral-950"
           >
             Full routine
-            <ChevronRight size={15} />
+            <ChevronRight
+              size={15}
+              className="transition-transform group-hover:translate-x-0.5"
+            />
           </Link>
         </motion.div>
 
         <div className="glass overflow-hidden rounded-[30px]">
-          {todayClasses.length === 0 ? (
+          {todayClasses.length ===
+          0 ? (
             <div className="px-5 py-8">
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-black/5">
                 <Clock3
@@ -261,23 +335,29 @@ if (!now) {
               </p>
 
               <p className="mt-1 text-sm leading-6 text-neutral-500">
-                Your schedule is clear for the
-                rest of the day.
+                Your schedule is clear
+                for the rest of the
+                day.
               </p>
             </div>
           ) : (
             <div className="divide-y divide-black/6">
               {todayClasses.map(
-                (session, index) => {
+                (
+                  session,
+                  index,
+                ) => {
                   const current =
                     currentClass?.id ===
                     session.id;
 
-                  const start = new Date(
-                    now,
-                  );
+                  const start =
+                    new Date(now);
 
-                  const [hours, minutes] =
+                  const [
+                    hours,
+                    minutes,
+                  ] =
                     session.start
                       .split(":")
                       .map(Number);
@@ -305,25 +385,27 @@ if (!now) {
                         x: 0,
                       }}
                       transition={{
-                        duration: 0.4,
+                        duration: 0.35,
                         delay:
-                          0.12 +
+                          0.1 +
                           index * 0.05,
                       }}
-                      className={`px-5 py-4 transition ${
+                      className={[
+                        "px-5 py-4 transition",
                         current
                           ? "bg-blue-500/4.5"
-                          : ""
-                      }`}
+                          : "",
+                      ].join(" ")}
                     >
                       <div className="flex gap-4">
-                        <div className="w-18.5 shrink-0">
+                        <div className="w-[4.65rem] shrink-0">
                           <p
-                            className={`text-sm font-semibold ${
+                            className={[
+                              "text-sm font-semibold",
                               current
                                 ? "text-blue-600"
-                                : "text-neutral-800"
-                            }`}
+                                : "text-neutral-800",
+                            ].join(" ")}
                           >
                             {formatTime(
                               session.start,
@@ -387,7 +469,77 @@ if (!now) {
         </div>
       </section>
 
-      {/* NEXT ACADEMIC EVENT */}
+      <section>
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 12,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.45,
+            delay: 0.14,
+          }}
+          className="glass rounded-[30px] p-5"
+        >
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-neutral-400">
+                Fall 2026
+              </p>
+
+              <h2 className="mt-1 text-xl font-semibold tracking-tight">
+                Semester progress
+              </h2>
+            </div>
+
+            <span className="text-sm font-semibold text-neutral-700">
+              {semesterProgress}%
+            </span>
+          </div>
+
+          <div className="mt-5 h-2 overflow-hidden rounded-full bg-black/6">
+            <motion.div
+              initial={{
+                width: 0,
+              }}
+              animate={{
+                width: `${semesterProgress}%`,
+              }}
+              transition={{
+                duration: 1,
+                ease: "easeOut",
+              }}
+              className="h-full rounded-full bg-neutral-900"
+            />
+          </div>
+
+          <div className="mt-3 flex items-center justify-between text-xs text-neutral-400">
+            <span>
+              {formatRelativeDate(
+                new Date(
+                  `${semesterInfo.startDate}T00:00:00`,
+                ),
+                now,
+              )}
+            </span>
+
+            <span>
+              Ends{" "}
+              {formatRelativeDate(
+                new Date(
+                  `${semesterInfo.endDate}T23:59:59`,
+                ),
+                now,
+              )}
+            </span>
+          </div>
+        </motion.div>
+      </section>
+
       {nextEvent && (
         <motion.section
           initial={{
@@ -400,14 +552,19 @@ if (!now) {
           }}
           transition={{
             duration: 0.45,
-            delay: 0.16,
+            delay: 0.2,
           }}
         >
           <Link
             href="/calendar/"
-            className="block"
+            className="group block outline-none"
           >
-            <div className="glass group rounded-[30px] p-5 transition-transform active:scale-[0.985]">
+            <motion.div
+              whileTap={{
+                scale: 0.985,
+              }}
+              className="glass rounded-[30px] p-5 transition-shadow group-hover:shadow-[0_24px_60px_rgba(0,0,0,0.075)] focus-visible:ring-2 focus-visible:ring-black/15"
+            >
               <div className="flex items-start gap-4">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/5">
                   <CalendarDays
@@ -417,7 +574,7 @@ if (!now) {
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-400">
                     Next academic event
                   </p>
 
@@ -449,12 +606,11 @@ if (!now) {
                   className="mt-1 shrink-0 text-neutral-400 transition-transform group-hover:translate-x-0.5"
                 />
               </div>
-            </div>
+            </motion.div>
           </Link>
         </motion.section>
       )}
 
-      {/* FOOTER CONTEXT */}
       <motion.div
         initial={{
           opacity: 0,
@@ -464,13 +620,14 @@ if (!now) {
         }}
         transition={{
           duration: 0.5,
-          delay: 0.22,
+          delay: 0.26,
         }}
         className="px-1 pb-3"
       >
         <p className="text-center text-[11px] leading-5 text-neutral-400">
-          East West University · Information
-          Studies · Fall 2026
+          East West University ·
+          Information Studies ·
+          Fall 2026
         </p>
       </motion.div>
     </div>
