@@ -1,7 +1,11 @@
 "use client";
 
 import { motion } from "motion/react";
-import { dayLabels, type DayCode } from "@/data/fall-2026";
+
+import {
+  dayLabels,
+  type DayCode,
+} from "@/data/fall-2026";
 
 interface DaySelectorProps {
   selectedDay: DayCode;
@@ -9,7 +13,10 @@ interface DaySelectorProps {
   onChange: (day: DayCode) => void;
 }
 
-const shortNames: Record<DayCode, string> = {
+const shortNames: Record<
+  DayCode,
+  string
+> = {
   S: "Sun",
   M: "Mon",
   T: "Tue",
@@ -25,18 +32,33 @@ export default function DaySelector({
   onChange,
 }: DaySelectorProps) {
   return (
-    <div className="glass rounded-[28px] p-2">
+    <div className="glass rounded-[30px] p-2">
       <div className="grid grid-cols-7 gap-1">
         {dayLabels.map((day) => {
-          const active = selectedDay === day.code;
-          const isToday = today === day.code;
+          const active =
+            selectedDay === day.code;
+
+          const isToday =
+            today === day.code;
 
           return (
-            <button
+            <motion.button
               key={day.code}
               type="button"
-              onClick={() => onChange(day.code)}
-              className="relative min-w-0 rounded-[21px] px-1 py-3 text-center outline-none"
+              aria-label={`Select ${shortNames[day.code]}`}
+              aria-pressed={active}
+              onClick={() =>
+                onChange(day.code)
+              }
+              whileTap={{
+                scale: 0.92,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                damping: 30,
+              }}
+              className="relative min-w-0 touch-manipulation rounded-[22px] px-1 py-3 text-center outline-none focus-visible:ring-2 focus-visible:ring-black/15"
             >
               {active && (
                 <motion.div
@@ -46,17 +68,18 @@ export default function DaySelector({
                     stiffness: 420,
                     damping: 32,
                   }}
-                  className="absolute inset-0 rounded-[21px] bg-neutral-950"
+                  className="absolute inset-0 rounded-[22px] bg-neutral-950 shadow-[0_8px_20px_rgba(0,0,0,0.12)]"
                 />
               )}
 
               <span className="relative z-10 block">
                 <span
-                  className={`block text-[15px] font-semibold transition-colors ${
+                  className={[
+                    "block text-[15px] font-semibold transition-colors",
                     active
                       ? "text-white"
-                      : "text-neutral-800"
-                  }`}
+                      : "text-neutral-800",
+                  ].join(" ")}
                 >
                   {day.code === "A"
                     ? "S"
@@ -64,30 +87,29 @@ export default function DaySelector({
                 </span>
 
                 <span
-                  className={`mt-0.5 block text-[9px] font-medium transition-colors ${
+                  className={[
+                    "mt-0.5 block text-[9px] font-medium transition-colors",
                     active
                       ? "text-white/55"
-                      : "text-neutral-400"
-                  }`}
+                      : "text-neutral-400",
+                  ].join(" ")}
                 >
                   {shortNames[day.code]}
                 </span>
 
-                {isToday && !active && (
+                {isToday && (
                   <motion.span
                     layoutId="today-dot"
-                    className="mx-auto mt-1 block h-1 w-1 rounded-full bg-blue-500"
-                  />
-                )}
-
-                {isToday && active && (
-                  <motion.span
-                    layoutId="active-today-dot"
-                    className="mx-auto mt-1 block h-1 w-1 rounded-full bg-blue-300"
+                    className={[
+                      "mx-auto mt-1 block h-1 w-1 rounded-full",
+                      active
+                        ? "bg-blue-300"
+                        : "bg-blue-500",
+                    ].join(" ")}
                   />
                 )}
               </span>
-            </button>
+            </motion.button>
           );
         })}
       </div>
