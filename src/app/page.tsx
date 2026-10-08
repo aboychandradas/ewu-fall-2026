@@ -7,8 +7,6 @@ import {
   ArrowRight,
   CalendarDays,
   ChevronRight,
-  Clock3,
-  MapPin,
 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -18,10 +16,10 @@ import {
 } from "@/data/fall-2026";
 
 import LiveStatusCard from "@/components/home/live-status-card";
+import TodayTimeline from "@/components/home/today-timeline";
 
 import {
   formatRelativeDate,
-  formatTime,
   getClassesForDate,
   getCurrentClass,
   getNextAcademicEvent,
@@ -31,14 +29,11 @@ import {
 import { useLiveNow } from "@/lib/use-live-now";
 
 function formatToday(date: Date) {
-  return new Intl.DateTimeFormat(
-    "en-US",
-    {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    },
-  ).format(date);
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  }).format(date);
 }
 
 function getGreeting(hour: number) {
@@ -53,7 +48,7 @@ function getGreeting(hour: number) {
   return "Good evening";
 }
 
-function formatCountdownTo(
+function formatEventCountdown(
   target: Date,
   now: Date,
 ) {
@@ -61,43 +56,40 @@ function formatCountdownTo(
     target.getTime() - now.getTime();
 
   if (difference <= 0) {
-    return "Now";
+    return "Today";
   }
 
-  const minutes = Math.ceil(
-    difference / 60000,
+  const days = Math.floor(
+    difference / (1000 * 60 * 60 * 24),
   );
-
-  if (minutes < 60) {
-    return `${minutes}m`;
-  }
 
   const hours = Math.floor(
-    minutes / 60,
+    (difference %
+      (1000 * 60 * 60 * 24)) /
+      (1000 * 60 * 60),
   );
 
-  const remainingMinutes =
-    minutes % 60;
-
-  if (remainingMinutes === 0) {
-    return `${hours}h`;
+  if (days > 0) {
+    return `${days}d ${hours}h`;
   }
 
-  return `${hours}h ${remainingMinutes}m`;
+  const minutes = Math.floor(
+    (difference %
+      (1000 * 60 * 60)) /
+      (1000 * 60),
+  );
+
+  return `${hours}h ${minutes}m`;
 }
 
-function getSemesterProgress(
-  now: Date,
-) {
-  const start =
-    new Date(
-      `${semesterInfo.startDate}T00:00:00`,
-    ).getTime();
+function getSemesterProgress(now: Date) {
+  const start = new Date(
+    `${semesterInfo.startDate}T00:00:00`,
+  ).getTime();
 
-  const end =
-    new Date(
-      `${semesterInfo.endDate}T23:59:59`,
-    ).getTime();
+  const end = new Date(
+    `${semesterInfo.endDate}T23:59:59`,
+  ).getTime();
 
   const current = now.getTime();
 
@@ -110,9 +102,7 @@ function getSemesterProgress(
   }
 
   return Math.round(
-    ((current - start) /
-      (end - start)) *
-      100,
+    ((current - start) / (end - start)) * 100,
   );
 }
 
@@ -122,26 +112,17 @@ export default function Home() {
   const now = useLiveNow();
 
   const todayClasses = useMemo(
-    () =>
-      now
-        ? getClassesForDate(now)
-        : [],
+    () => (now ? getClassesForDate(now) : []),
     [now],
   );
 
   const currentClass = useMemo(
-    () =>
-      now
-        ? getCurrentClass(now)
-        : null,
+    () => (now ? getCurrentClass(now) : null),
     [now],
   );
 
   const nextClass = useMemo(
-    () =>
-      now
-        ? getNextClass(now)
-        : null,
+    () => (now ? getNextClass(now) : null),
     [now],
   );
 
@@ -156,10 +137,9 @@ export default function Home() {
     [now],
   );
 
-  const semesterProgress =
-    now
-      ? getSemesterProgress(now)
-      : 0;
+  const semesterProgress = now
+    ? getSemesterProgress(now)
+    : 0;
 
   if (!now) {
     return (
@@ -176,27 +156,25 @@ export default function Home() {
 
         <div className="h-72 animate-pulse rounded-[32px] bg-black/6" />
 
-        <div className="h-36 animate-pulse rounded-[30px] bg-black/6" />
+        <div className="h-44 animate-pulse rounded-[30px] bg-black/6" />
+
+        <div className="h-32 animate-pulse rounded-[30px] bg-black/6" />
 
         <div className="h-28 animate-pulse rounded-[30px] bg-black/6" />
       </div>
     );
   }
 
-  const isCurrent = Boolean(
-    currentClass,
-  );
+  const isCurrent = Boolean(currentClass);
 
   const isNextToday = Boolean(
     !currentClass &&
       nextClass &&
-      new Date(
-        nextClass.start,
-      ).toDateString() ===
+      new Date(nextClass.start).toDateString() ===
         now.toDateString(),
   );
 
-  const status =
+  const status: "current" | "next" | "done" =
     isCurrent
       ? "current"
       : isNextToday
@@ -215,6 +193,7 @@ export default function Home() {
 
   return (
     <div className="space-y-7 pb-3">
+      {/* HEADER */}
       <motion.header
         initial={{
           opacity: 0,
@@ -249,9 +228,7 @@ export default function Home() {
         </div>
 
         <h1 className="mt-7 text-[39px] font-semibold tracking-[-0.055em] text-neutral-950">
-          {getGreeting(
-            now.getHours(),
-          )}
+          {getGreeting(now.getHours())}
         </h1>
 
         <div className="mt-1 flex items-center justify-between gap-4">
@@ -260,17 +237,15 @@ export default function Home() {
           </p>
 
           <p className="shrink-0 font-mono text-sm font-semibold tabular-nums text-neutral-700">
-            {new Intl.DateTimeFormat(
-              "en-US",
-              {
-                hour: "numeric",
-                minute: "2-digit",
-              },
-            ).format(now)}
+            {new Intl.DateTimeFormat("en-US", {
+              hour: "numeric",
+              minute: "2-digit",
+            }).format(now)}
           </p>
         </div>
       </motion.header>
 
+      {/* LIVE STATUS */}
       <LiveStatusCard
         status={status}
         session={session}
@@ -281,6 +256,7 @@ export default function Home() {
         }}
       />
 
+      {/* TODAY TIMELINE */}
       <section className="space-y-3">
         <motion.div
           initial={{
@@ -302,8 +278,8 @@ export default function Home() {
               Today
             </p>
 
-            <h2 className="mt-1 text-xl font-semibold tracking-tight">
-              Your schedule
+            <h2 className="mt-1 text-xl font-semibold tracking-[-0.025em]">
+              Your day
             </h2>
           </div>
 
@@ -319,156 +295,14 @@ export default function Home() {
           </Link>
         </motion.div>
 
-        <div className="glass overflow-hidden rounded-[30px]">
-          {todayClasses.length ===
-          0 ? (
-            <div className="px-5 py-8">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-black/5">
-                <Clock3
-                  size={19}
-                  className="text-neutral-500"
-                />
-              </div>
-
-              <p className="mt-4 font-semibold">
-                No classes today.
-              </p>
-
-              <p className="mt-1 text-sm leading-6 text-neutral-500">
-                Your schedule is clear
-                for the rest of the
-                day.
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-black/6">
-              {todayClasses.map(
-                (
-                  session,
-                  index,
-                ) => {
-                  const current =
-                    currentClass?.id ===
-                    session.id;
-
-                  const start =
-                    new Date(now);
-
-                  const [
-                    hours,
-                    minutes,
-                  ] =
-                    session.start
-                      .split(":")
-                      .map(Number);
-
-                  start.setHours(
-                    hours,
-                    minutes,
-                    0,
-                    0,
-                  );
-
-                  const isUpcoming =
-                    start.getTime() >
-                    now.getTime();
-
-                  return (
-                    <motion.div
-                      key={session.id}
-                      initial={{
-                        opacity: 0,
-                        x: 10,
-                      }}
-                      animate={{
-                        opacity: 1,
-                        x: 0,
-                      }}
-                      transition={{
-                        duration: 0.35,
-                        delay:
-                          0.1 +
-                          index * 0.05,
-                      }}
-                      className={[
-                        "px-5 py-4 transition",
-                        current
-                          ? "bg-blue-500/4.5"
-                          : "",
-                      ].join(" ")}
-                    >
-                      <div className="flex gap-4">
-                        <div className="w-[4.65rem] shrink-0">
-                          <p
-                            className={[
-                              "text-sm font-semibold",
-                              current
-                                ? "text-blue-600"
-                                : "text-neutral-800",
-                            ].join(" ")}
-                          >
-                            {formatTime(
-                              session.start,
-                            )}
-                          </p>
-
-                          <p className="mt-0.5 text-xs text-neutral-400">
-                            {formatTime(
-                              session.end,
-                            )}
-                          </p>
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <h3 className="truncate font-semibold tracking-[-0.015em]">
-                              {session.course}
-                            </h3>
-
-                            {current && (
-                              <span className="flex shrink-0 items-center gap-1 rounded-full bg-blue-500/10 px-2 py-1 text-[10px] font-semibold text-blue-600">
-                                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500" />
-                                NOW
-                              </span>
-                            )}
-
-                            {!current &&
-                              isUpcoming && (
-                                <span className="hidden shrink-0 rounded-full bg-black/4 px-2 py-1 text-[10px] font-semibold text-neutral-400 sm:inline-flex">
-                                  UPCOMING
-                                </span>
-                              )}
-                          </div>
-
-                          <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-500">
-                            <span className="inline-flex items-center gap-1">
-                              <MapPin
-                                size={13}
-                              />
-                              {session.room}
-                            </span>
-
-                            <span className="inline-flex items-center gap-1">
-                              <Clock3
-                                size={13}
-                              />
-                              {session.type ===
-                              "lab"
-                                ? "Lab"
-                                : "Class"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                },
-              )}
-            </div>
-          )}
-        </div>
+        <TodayTimeline
+          sessions={todayClasses}
+          now={now}
+          currentClassId={currentClass?.id}
+        />
       </section>
 
+      {/* SEMESTER PROGRESS */}
       <section>
         <motion.div
           initial={{
@@ -491,7 +325,7 @@ export default function Home() {
                 Fall 2026
               </p>
 
-              <h2 className="mt-1 text-xl font-semibold tracking-tight">
+              <h2 className="mt-1 text-xl font-semibold tracking-[-0.025em]">
                 Semester progress
               </h2>
             </div>
@@ -540,6 +374,7 @@ export default function Home() {
         </motion.div>
       </section>
 
+      {/* NEXT ACADEMIC EVENT */}
       {nextEvent && (
         <motion.section
           initial={{
@@ -592,8 +427,8 @@ export default function Home() {
 
                     <span className="h-1 w-1 rounded-full bg-neutral-300" />
 
-                    <span>
-                      {formatCountdownTo(
+                    <span className="font-medium text-neutral-700">
+                      {formatEventCountdown(
                         nextEvent.start,
                         now,
                       )}
@@ -611,6 +446,7 @@ export default function Home() {
         </motion.section>
       )}
 
+      {/* FOOTER */}
       <motion.div
         initial={{
           opacity: 0,
