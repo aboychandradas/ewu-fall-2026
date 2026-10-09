@@ -187,7 +187,7 @@ export default function LiveStatusCard({
 
         <Pressable
           onClick={onOpenRoutine}
-          className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-semibold text-neutral-950 shadow-lg shadow-black/10"
+          className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-semibold text-black shadow-lg shadow-black/10"
         >
           Open routine
           <ArrowRight size={16} />
@@ -276,9 +276,9 @@ export default function LiveStatusCard({
 
         <Pressable
           onClick={onOpenRoutine}
-          className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white/95 px-4 text-sm font-semibold text-neutral-950 shadow-lg shadow-black/10"
+          className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-semibold text-black shadow-lg shadow-black/10"
         >
-          View routine
+           Open routine
           <ArrowRight size={16} />
         </Pressable>
       </motion.section>
@@ -396,7 +396,7 @@ export default function LiveStatusCard({
 
       <Pressable
         onClick={onOpenRoutine}
-        className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white/95 px-4 text-sm font-semibold text-neutral-950 shadow-lg shadow-black/10"
+        className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 text-sm font-semibold text-black shadow-lg shadow-black/10"
       >
         Open routine
         <ArrowRight size={16} />

@@ -17,6 +17,7 @@ import {
 
 import LiveStatusCard from "@/components/home/live-status-card";
 import TodayTimeline from "@/components/home/today-timeline";
+import ThemeToggle from "@/components/ui/theme-toggle";
 
 import {
   formatRelativeDate,
@@ -220,10 +221,13 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/70 bg-white/70 shadow-sm backdrop-blur-xl">
-            <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-neutral-700">
-              9TH
-            </span>
+          <div className="flex shrink-0 items-center gap-2">
+            <ThemeToggle />
+            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white/70 shadow-sm backdrop-blur-xl">
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-neutral-700">
+                9TH
+              </span>
+            </div>
           </div>
         </div>
 
