@@ -8,318 +8,183 @@
 
 > An iPhone-first academic companion PWA for Fall 2026, built with offline access, an interactive weekly routine, academic calendar, and an installed-app experience.
 
-An iPhone-first Progressive Web App (PWA) built for an East West University Information Studies student in Fall 2026.
+An iPhone-first Progressive Web App (PWA) for viewing the Fall 2026 weekly routine and important academic dates for an East West University Information Studies student. It includes time-aware class and event status, Light/Dark/System appearance modes, installable app icons, and offline support for resources that have been cached on the device.
 
-The application provides a focused academic companion experience for checking the weekly class routine, viewing important semester dates, and continuing to use the core application when the device is offline.
+Live application: https://ewu-fall-2026.vercel.app/
+Source repository: https://github.com/aboychandradas/ewu-fall-2026
+GitHub releases: https://github.com/aboychandradas/ewu-fall-2026/releases
 
-Live app: https://ewu-fall-2026.vercel.app/
+This is a personal academic companion, not an official East West University system. Schedule and academic-calendar information is bundled with the source and should be checked against official university announcements if dates or rooms change.
 
-GitHub: https://github.com/aboychandradas/ewu-fall-2026
-
-Status: Production
-
+Contents
+Overview
+Features
+Fall 2026 class routine
+Fall 2026 academic calendar
+Technology stack
+Architecture
+Project structure
+Getting started
+Production build and local PWA testing
+Deploying to Vercel
+Installing on iPhone
+Accessibility and quality checks
+Privacy and data
+Limitations
+Maintenance notes
+Author
+License
 Overview
 
-EWU Fall 2026 is a lightweight, client-side academic companion designed around an iPhone-first experience.
+EWU Fall 2026 is a focused, mobile-first academic utility. It is designed for quick checks of today's classes, the weekly routine, and semester milestones without requiring a login or a backend service.
 
-The project deliberately keeps the scope small and practical:
+The main navigation contains three areas:
 
-Weekly class routine
+Home — time-aware current/next-class information, a live timeline, semester progress, and the next academic event.
+Routine — a seven-day selector, course and lab sessions, current/upcoming/completed states, countdowns, and class-detail sheets.
+Calendar — academic events grouped by month, event status and countdowns, and event-detail sheets.
 
-Current/next-class information
+The interface supports System, Light, and Dark appearance preferences. The selected preference is stored locally in the browser. The app is installable as a PWA, and previously cached pages and assets can remain available when the device is offline.
 
-Academic calendar and semester milestones
-
-Interactive detail sheets for classes and events
-
-Installable PWA experience
-
-Offline access to the main application
-
-No backend, database, authentication, or external API dependency
-
-Semester data is bundled locally with the application so the core experience remains fast, deterministic, and available without an internet connection.
-
-Key Features
-
+Features
 Home
-
-The Home screen is the primary entry point and provides an at-a-glance view of the academic day.
-
-It is designed around a compact mobile interface with dynamic time-aware class status and navigation to the main academic sections.
-
+Compact, iPhone-first academic dashboard.
+Live current-class and next-class status.
+Today timeline with time-aware session states.
+Live countdown and progress indicators where applicable.
+Semester progress and next-event information.
+Quick action to open the weekly routine.
 Routine
-
-The Routine screen provides a day-based weekly schedule for Fall 2026.
-
-Features include:
-
-Sunday–Thursday class selection
-
-Friday and Saturday empty-day states
-
-Animated day selector
-
-Current-class highlighting
-
-Next/current class awareness
-
-Tap-to-open class details
-
-Course and lab distinction
-
-Mobile-friendly bottom-sheet details
-
+Day selector for Sunday through Saturday.
+Course and laboratory sessions, with rooms and scheduled times.
+Current, upcoming, and completed class states.
+Live countdowns and session progress.
+Tap-to-open class details.
+Empty-day states for days without scheduled classes.
 Calendar
-
-The Calendar screen organizes important academic dates into a clean timeline-style experience.
-
-Features include:
-
-Upcoming-event emphasis
-
-Month grouping
-
-Past-event visual treatment
-
-Event type indicators
-
-Tap-to-open event details
-
-Mobile-friendly bottom-sheet details
-
-PWA / Offline Support
-
-The application is installable as a PWA and is designed to remain useful without a network connection.
-
-Offline functionality includes:
-
-Home
-
-Routine
-
-Calendar
-
-Offline fallback page
-
-Bundled static assets
-
-App icons
-
-Manifest metadata
-
-Service worker controlled application shell
-
-The production build generates a root-scoped sw.js and uses Serwist for precaching, runtime caching, and offline fallback behavior.
-
-Fall 2026 Routine
-
-Day
-
-Course
-
-Time
-
-Room
-
-Sunday
-
-GEN7211
-
-11:50 AM–1:20 PM
-
-FUB-104
-
-Monday
-
-INF7402
-
-10:10–11:40 AM
-
-FUB-303
-
-Monday
-
-INF7403
-
-1:30–3:00 PM
-
-AB1-202
-
-Tuesday
-
-GEN7211
-
-11:50 AM–1:20 PM
-
-FUB-104
-
-Wednesday
-
-INF7402 Lab
-
-8:00–10:00 AM
-
-531 (C. Lab-5)
-
-Wednesday
-
-INF7402
-
-10:10–11:40 AM
-
-FUB-303
-
-Wednesday
-
-INF7403
-
-1:30–3:00 PM
-
-AB1-202
-
-Thursday
-
-INF7403 Lab
-
-10:10 AM–12:10 PM
-
-531 (C. Lab-5)
-
-Friday
-
-—
-
-No class shown
-
-—
-
-Saturday
-
-—
-
-No class shown
-
-—
-
-The internal application model uses A for Saturday so that the application's day codes do not conflict with the university's S code for Sunday.
-
-Fall 2026 Academic Calendar
-
-Date
-
-Event
-
-September 13, 2026
-
-First Day of Classes
-
-October 19–21, 2026
-
-Durga Puja Holiday
-
-November 15, 2026
-
-Mid-Semester Assessment Submission
-
-December 10, 2026
-
-Last Day of Classes
-
-December 13–20, 2026
-
-Final Examinations
-
-December 16, 2026
-
-Victory Day
-
-December 23, 2026
-
-Submission of Final Grades
-
-December 26, 2026 – January 4, 2027
-
-Semester Break
-
-The application intentionally excludes tuition, payment, installment, course-drop, refund, and similar financial/administrative tracking features.
-
-Tech Stack
-
-Application
-
-Next.js 16.3.8
-
-React 19
-
-TypeScript
-
-Tailwind CSS v4
-
-shadcn/ui
-
-Motion (motion/react)
-
-lucide-react
-
-PWA / Build
-
-Serwist
-
-@serwist/turbopack
-
-Static export with Next.js output: "export"
-
-Custom Next.js build adapter for Windows static-export RSC path normalization
-
-Vercel static deployment
-
-Architecture
-
-This project is intentionally backend-free:
-
+Academic events grouped by month.
+Upcoming, active, and past event states.
+Live countdowns and progress indicators where applicable.
+Tap-to-open event detail sheets.
+Semester milestones displayed in a mobile-friendly layout.
+Appearance and navigation
+System appearance follows the browser/device prefers-color-scheme setting.
+Light and Dark modes can be selected manually.
+The preference is stored in browser local storage.
+Animated, compact bottom navigation between Home, Routine, and Calendar.
+Reduced-motion CSS support for users who prefer less animation.
+Progressive Web App and offline support
+Web app manifest and installable app icons.
+Root-scoped /sw.js service worker generated during the production build.
+Serwist precaching and runtime caching.
+Offline fallback page at /offline/.
+Connection indicator for online/offline transitions.
+Previously cached application pages and assets may remain available offline.
+Countdown timers on already-open pages continue using the device's local clock while the network is unavailable.
+
+Offline availability depends on the page and resources having been loaded and cached successfully. A browser's online/offline indicator reports network connectivity status; it does not guarantee that a remote website is reachable.
+
+Fall 2026 class routine
+Day	Course / session	Time	Room
+Sunday	GEN7211	11:50 AM–1:20 PM	FUB-104
+Monday	INF7402	10:10–11:40 AM	FUB-303
+Monday	INF7403	1:30–3:00 PM	AB1-202
+Tuesday	GEN7211	11:50 AM–1:20 PM	FUB-104
+Wednesday	INF7402 Lab	8:00–10:00 AM	531 (C. Lab-5)
+Wednesday	INF7402	10:10–11:40 AM	FUB-303
+Wednesday	INF7403	1:30–3:00 PM	AB1-202
+Thursday	INF7403 Lab	10:10 AM–12:10 PM	531 (C. Lab-5)
+Friday	—	No class listed	—
+Saturday	—	No class listed	—
+
+The university day codes use S for Sunday. The application's internal data uses A for Saturday to keep those codes distinct.
+
+Fall 2026 academic calendar
+Date	Event
+September 13, 2026	First Day of Classes
+October 19–21, 2026	Durga Puja Holiday
+November 15, 2026	Mid-Semester Assessment Submission
+December 10, 2026	Last Day of Classes
+December 13–20, 2026	Final Examinations
+December 16, 2026	Victory Day
+December 23, 2026	Submission of Final Grades
+December 26, 2026–January 4, 2027	Semester Break
+
+All timetable and calendar details are local project data. Update them in the source when official information changes, then rebuild and redeploy the app.
+
+## Technology stack
+
+### Application
+
+* [Next.js](https://nextjs.org/) 16.3.8, App Router and static export
+* [React](https://react.dev/) 19
+* [TypeScript](https://www.typescriptlang.org/) with strict type checking
+* [Tailwind CSS](https://tailwindcss.com/) v4
+* [Motion](https://motion.dev/) (`motion/react`)
+* [Lucide React](https://lucide.dev/) icons
+* shadcn/ui conventions/components where used
+
+### PWA and deployment
+
+* [Serwist](https://serwist.pages.dev/) for service-worker caching
+* `@serwist/turbopack` worker integration
+* Next.js static export to `out/`
+* Custom Windows static-export adapter at `build/adapter.js`
+* [Vercel](https://vercel.com/) static deployment
+
+## Architecture
+
+The application intentionally has no backend dependency:
+
+```text
 Next.js App Router
-        │
-        ├── Local semester data
-        ├── Home
-        ├── Routine
-        └── Calendar
-        │
-        ├── Static export → out/
-        │
-        └── Serwist service worker → sw.js
-                    │
-                    ├── Precache
-                    ├── Runtime caching
-                    └── Offline fallback
+       │
+       ├── Home
+       ├── Routine
+       ├── Calendar
+       └── Offline fallback
+       │
+       ├── Local semester data (src/data/fall-2026.ts)
+       │
+       └── Static export → out/
+                     │
+                     └── build service worker → out/sw.js
+                                   │
+                                   ├── Precache
+                                   ├── Runtime caching
+                                   └── Offline navigation fallback
+```
 
-There is currently:
+There is no application database, authentication, API server, cloud synchronization, or external academic-data API. The class timetable and calendar are bundled locally with the application.
 
-No database
+### Time and scheduling logic
 
-No authentication
+`src/lib/schedule.ts` contains reusable scheduling helpers, including day selection, class lookup, current/next class detection, event lookup, and countdown formatting. Live-time hooks provide current time to the interface while keeping server rendering and hydration consistent.
 
-No API server
+### Service worker
 
-No server-side application dependency
+* `src/app/sw.ts` defines the Serwist worker and offline fallback behavior.
+* `src/components/pwa/register-pwa.tsx` registers `/sw.js` in production only.
+* `scripts/build-sw.mjs` generates the root-scoped `out/sw.js` after the Next.js build.
 
-No external academic-data API
+The development server intentionally does not register the production service worker. Use the production build and `npx serve out` to test actual offline behavior.
 
-Project Structure
+### Windows static-export adapter
 
+`build/adapter.js` is a required, tracked source file. It normalizes generated static React Server Component payload paths so the exported routes work correctly with this project's Windows build setup. Keep this file committed even if a broad Git ignore rule ignores the `build/` directory. Do not remove the configured `adapterPath` from `next.config.ts` without replacing the workaround and validating the export.
+
+## Project structure
+
+```text
 ewu-fall-2026/
 ├── build/
 │   └── adapter.js
-│
 ├── public/
-│   ├── favicon.ico
 │   ├── apple-touch-icon.png
 │   ├── icon-192.png
 │   └── icon-512.png
-│
 ├── scripts/
 │   └── build-sw.mjs
-│
 ├── src/
 │   ├── app/
 │   │   ├── calendar/
@@ -328,464 +193,186 @@ ewu-fall-2026/
 │   │   │   └── page.tsx
 │   │   ├── offline/
 │   │   │   └── page.tsx
-│   │   ├── sw.ts
-│   │   ├── manifest.ts
+│   │   ├── globals.css
 │   │   ├── layout.tsx
+│   │   ├── manifest.ts
 │   │   ├── page.tsx
-│   │   └── globals.css
-│   │
+│   │   └── sw.ts
 │   ├── components/
-│   │   ├── home/
-│   │   │   └── class-status-card.tsx
-│   │   ├── routine/
-│   │   │   ├── day-selector.tsx
-│   │   │   ├── routine-class-card.tsx
-│   │   │   └── class-detail-sheet.tsx
 │   │   ├── calendar/
-│   │   │   ├── calendar-event-card.tsx
-│   │   │   └── calendar-event-sheet.tsx
+│   │   ├── home/
 │   │   ├── pwa/
-│   │   │   └── register-pwa.tsx
-│   │   ├── app-shell.tsx
-│   │   └── ui/
-│   │
+│   │   ├── routine/
+│   │   ├── ui/
+│   │   └── app-shell.tsx
 │   ├── data/
 │   │   └── fall-2026.ts
-│   │
 │   └── lib/
-│       ├── schedule.ts
-│       └── use-now.ts
-│
+│       └── schedule.ts
 ├── next.config.ts
 ├── package.json
-├── tsconfig.json
-├── eslint.config.mjs
-├── components.json
 └── README.md
+```
 
-Data Model
+Some component and utility files are omitted from the tree for readability. The source directories are the authoritative project structure.
 
-The semester information is stored locally in src/data/fall-2026.ts.
+## Getting started
 
-The core data types include:
+### Prerequisites
 
-DayCode
+* A compatible Node.js version
+* npm
+* Git
+* VS Code or another TypeScript-capable editor
 
-ClassType
+### Clone the repository
 
-ClassSession
-
-AcademicEvent
-
-The schedule utilities in src/lib/schedule.ts provide reusable logic for:
-
-Determining the current day
-
-Formatting times
-
-Getting classes for a selected day/date
-
-Finding the current class
-
-Finding the next class
-
-Finding the next academic event
-
-Formatting countdowns and relative dates
-
-This keeps scheduling logic separate from the UI components.
-
-Time and Hydration Handling
-
-The application uses src/lib/use-now.ts to provide a hydration-safe time source.
-
-This was introduced to avoid server/client rendering mismatches caused by directly initializing React state from new Date() during server rendering.
-
-The hook uses useSyncExternalStore so the application can update the current time periodically without introducing the hydration mismatch that originally appeared on the Home screen.
-
-PWA Architecture
-
-The PWA is deliberately built around the static-export version of the application.
-
-Manifest
-
-src/app/manifest.ts defines:
-
-Application name
-
-Short name (9th-Sem.)
-
-Start URL
-
-Scope
-
-Standalone display mode
-
-Portrait orientation
-
-Theme/background colors
-
-192×192 icon
-
-512×512 icon
-
-Apple icon
-
-src/app/layout.tsx also declares the Apple touch icon:
-
-public/apple-touch-icon.png
-
-This provides the dedicated icon used when the web application is added to an iPhone Home Screen.
-
-Service worker registration
-
-src/components/pwa/register-pwa.tsx registers /sw.js only in production.
-
-Development intentionally does not register the service worker because the generated service worker is produced by the production build pipeline.
-
-Service worker source
-
-src/app/sw.ts configures Serwist with:
-
-Generated precache manifest
-
-URL-parameter-insensitive precache matching for Next.js RSC requests
-
-skipWaiting
-
-clientsClaim
-
-navigation preload
-
-Serwist default runtime caching
-
-Document-level offline fallback to /offline/
-
-Production service worker generation
-
-scripts/build-sw.mjs runs after next build and generates the root-scoped:
-
-out/sw.js
-
-This is necessary because the project uses a static export and needs a root service worker that can control / rather than a nested /serwist/ route.
-
-Windows Static Export Adapter
-
-The project contains:
-
-build/adapter.js
-
-This custom Next.js build adapter normalizes generated static RSC payload paths on Windows.
-
-During development of the PWA, the static export generated RSC payload files for routes such as /routine/ and /calendar/ in nested paths, while the browser expected flattened filenames.
-
-The adapter converts paths such as:
-
-out/routine/__next.routine/__PAGE__.txt
-
-to:
-
-out/routine/__next.routine.__PAGE__.txt
-
-This allows client-side navigation and offline caching to work correctly with the static export on Windows.
-
-Getting Started
-
-Prerequisites
-
-Recommended environment:
-
-Node.js compatible with the project dependencies
-
-npm
-
-Git
-
-VS Code or another TypeScript-capable editor
-
-Clone the repository
-
+```bash
 git clone https://github.com/aboychandradas/ewu-fall-2026.git
 cd ewu-fall-2026
+```
 
-Install dependencies
+### Install dependencies
 
+```bash
 npm install
+```
 
-Start development
+### Start development
 
+```bash
 npm run dev
+```
 
-Open the local URL shown by Next.js.
+Open the local URL printed by Next.js. The development server does not register the production service worker; this is intentional.
 
-The development server intentionally does not register the production service worker.
+## Production build and local PWA testing
 
-Production Build
+### Build the production export
 
-The project uses a combined production build command:
-
+```bash
 npm run build
+```
 
-The build performs two stages:
+The build runs Next.js static export first and then generates the root-scoped service worker:
 
+```text
 next build
-        ↓
-Static export to out/
-        ↓
+    ↓
+Static export → out/
+    ↓
 node scripts/build-sw.mjs
-        ↓
-Root-scoped out/sw.js
+    ↓
+out/sw.js
+```
 
-A successful production build should generate at least:
+A successful build should contain the exported Home, Routine, Calendar, and Offline pages, the web app manifest, app icons, and `sw.js`.
 
-out/
-├── index.html
-├── routine/
-│   ├── index.html
-│   └── __next.routine.__PAGE__.txt
-├── calendar/
-│   ├── index.html
-│   └── __next.calendar.__PAGE__.txt
-├── offline/
-│   └── index.html
-├── manifest.webmanifest
-├── icon-192.png
-├── icon-512.png
-├── apple-touch-icon.png
-└── sw.js
+### Serve the production output locally
 
-Local Production Testing
-
-To test the exported application and service worker locally:
-
-npm run build
+```bash
 npx serve out
+```
 
-Then open the URL printed by serve.
+Open the URL printed by `serve`. To verify offline functionality:
 
-For a meaningful PWA test:
+1. Load Home while online.
+2. Visit Routine and Calendar while online so their resources can be cached.
+3. In browser DevTools, confirm the service worker is active and controlling the page.
+4. Enable the browser's Offline network mode.
+5. Test reload and navigation to the pages that have been cached.
+6. Check the live countdown on an already-open page and verify that the theme preference remains applied.
+7. Restore the connection and confirm the connection indicator updates.
 
-Open Home while online.
+When testing a new service-worker build, an old registration or cache can serve older files. If necessary, unregister the local worker and clear that local origin's site data while online, then reload and cache the new build before repeating the offline test.
 
-Open Routine while online.
+### Useful quality checks
 
-Open Calendar while online.
+```bash
+npx eslint src
+npm run build
+git diff --check
+```
 
-Confirm the service worker is active.
+## Deploying to Vercel
 
-Switch the browser to offline mode.
+The project uses static export, so retain the established Vercel settings:
 
-Refresh and test Home, Routine, and Calendar again.
+| Setting           | Value                                                                  |
+| ----------------- | ---------------------------------------------------------------------- |
+| Framework Preset  | Other                                                                  |
+| Root Directory    | `./`                                                                   |
+| Build Command     | `npm run build`                                                        |
+| Output Directory  | `out`                                                                  |
+| Production branch | `main` (if this remains the repository's configured production branch) |
 
-If a new service-worker build is being tested, unregister the old service worker and clear site data before re-testing so an outdated cache does not interfere with the result.
+Do not change the build command to a default Next.js deployment command: `npm run build` also generates the service worker required by the static PWA. After a deployment reports Ready, test the deployed site and its offline behavior separately from local testing.
 
-Deployment
+## Installing on iPhone
 
-The production application is deployed on Vercel.
+1. Open https://ewu-fall-2026.vercel.app/ in Safari on the iPhone.
+2. Tap **Share**.
+3. Select **Add to Home Screen**.
+4. Confirm the app name and tap **Add**.
+5. Launch the app using the new Home Screen icon.
+6. While online, visit Home, Routine, and Calendar before testing offline behavior.
 
-Live URL:
+The app uses `public/apple-touch-icon.png` for the iOS Home Screen icon.
 
-https://ewu-fall-2026.vercel.app/
+## Accessibility and quality checks
 
-Vercel configuration
+During the reported validation pass:
 
-Because the application uses a static export, the Vercel project is configured to serve the out directory rather than expecting the standard .next deployment output.
+* Lighthouse Accessibility scored **100** for Home, Routine, and Calendar.
+* Keyboard navigation and visible focus indicators were manually reviewed.
+* Reduced-motion support was included in the global styles.
+* Light, Dark, and System appearance modes were tested.
+* Production offline behavior, including the Home action-button label and live countdowns, was tested.
 
-The effective deployment configuration is:
+Lighthouse results depend on the browser and environment. Re-run the audits after substantial UI changes; a score is evidence from a particular test run, not a permanent guarantee of accessibility.
 
-Framework Preset: Other
-Root Directory: ./
-Build Command: npm run build
-Output Directory: out
+## Privacy and data
 
-The build command must remain npm run build because the project needs both the Next.js static export and the custom Serwist generation step.
+* No login or personal account is required.
+* The application does not use a project-specific backend or database.
+* Class and academic event data are bundled in the repository.
+* The appearance preference is stored locally in browser storage.
+* The app is not an official university portal, and there is no automatic synchronization with university systems.
 
-iPhone Installation
+## Limitations
 
-On an iPhone:
+This project is deliberately focused on viewing a local academic routine and calendar. It does not provide:
 
-Open the production URL in Safari.
+* University authentication or student-portal integration
+* Automatic timetable synchronization
+* Grade retrieval
+* Assignment/deadline management
+* Push notifications
+* Cloud synchronization or cross-device preference syncing
+* Financial, tuition, installment, course-drop, or refund tracking
+* A backend interface for editing academic data
 
-Use Share.
+## Maintenance notes
 
-Select Add to Home Screen.
+* Keep the service-worker registration production-only unless the development workflow is intentionally redesigned.
+* Keep `out/` and `.next/` as generated, ignored build output.
+* Keep `build/adapter.js` tracked because the production build requires it.
+* Preserve `npm run build` as the combined static-export and service-worker generation command.
+* Keep academic data in `src/data/fall-2026.ts` in sync with verified official updates.
+* After changing routes or assets, rebuild and repeat the local production offline test.
 
-Launch the installed application from the Home Screen.
+## Author
 
-The application uses the apple-touch-icon.png asset for the Apple Home Screen icon.
-
-Design Approach
-
-The interface is intentionally inspired by modern iOS application patterns:
-
-iPhone-first layout
-
-Rounded surfaces
-
-Soft spacing and hierarchy
-
-Motion-based transitions
-
-Compact navigation
-
-Bottom-sheet interactions
-
-Minimal visual noise
-
-Clear typography
-
-Academic information presented as glanceable cards
-
-The design goal is not to reproduce a university portal. It is to provide a much smaller, faster, personal academic utility.
-
-Accessibility and Usability Considerations
-
-The interface is designed around touch-first interaction and short visual scanning sessions.
-
-Current usability considerations include:
-
-Large interactive controls
-
-Clear course/time/room grouping
-
-Motion-based emphasis rather than motion-only navigation
-
-Mobile-friendly bottom sheets
-
-Simple day selection
-
-Distinct course/lab labels
-
-Clear offline fallback state
-
-The project can continue to improve with more formal keyboard, screen-reader, contrast, and automated accessibility testing as the UI evolves.
-
-Privacy
-
-The application does not currently use authentication, a database, personal accounts, or an external backend.
-
-Semester data is bundled into the application source and there is no application-specific server storing academic records.
-
-The app should therefore be treated as a static academic companion rather than an official university system.
-
-Current Limitations
-
-This is intentionally a focused academic companion rather than a complete university information system.
-
-It currently does not provide:
-
-University authentication
-
-Student portal integration
-
-Automatic timetable synchronization
-
-Grade retrieval
-
-Assignment management
-
-Notifications/push messaging
-
-Cloud synchronization
-
-Tuition/payment/installment tracking
-
-Course drop/refund management
-
-Backend data editing
-
-All Fall 2026 schedule and academic calendar information is currently maintained in local project data.
-
-Future Ideas
-
-Potential future enhancements, if needed, include:
-
-Custom reminders
-
-Assignment/deadline tracking
-
-Personal notes
-
-Favorite rooms/courses
-
-Installable notification support
-
-More semesters using the same data model
-
-Local persistent user preferences
-
-Automated academic-data import
-
-Enhanced accessibility testing
-
-These are intentionally outside the current release scope.
-
-Development Notes
-
-A few project decisions are deliberate and should be preserved when maintaining the project:
-
-Keep service-worker registration production-only
-
-The development server does not generate the same root service-worker artifact as the production build. Do not manually register /sw.js during normal development.
-
-Keep generated output out of Git
-
-The out/ and .next/ directories are generated build artifacts and should remain ignored.
-
-Keep the deployment adapter tracked
-
-build/adapter.js is source code required by the production build and therefore must remain tracked by Git even though the general build/ directory was originally ignored.
-
-Keep application data local unless the architecture changes intentionally
-
-The current app depends on local semester data by design. Introducing a backend, API, or database would be a larger architecture change rather than a small feature addition.
-
-Project Milestones
-
-The project progressed through these major milestones:
-
-Next.js application foundation
-
-Fall 2026 local academic data model
-
-Dynamic Home screen
-
-Routine 2.0
-
-Calendar 2.0
-
-PWA manifest and installable icons
-
-Production service worker generation
-
-Offline fallback and offline navigation
-
-Windows static-export RSC path handling
-
-GitHub repository setup
-
-Vercel deployment
-
-iPhone 11 installation and real-device offline testing
-
-Author
-
-Aboy Chandra Das
-
+**Aboy Chandra Das**
 GitHub: https://github.com/aboychandradas
-
 Portfolio: https://aboysystems.com/
 
-License
+## License
 
-No open-source license is currently specified for this repository.
+No open-source license is currently specified for this repository. Unless a license is added, do not assume that reuse, redistribution, or modification is permitted beyond rights provided by applicable law.
 
-Unless a license is added to the repository, reuse and redistribution should not be assumed to be permitted beyond the rights granted by applicable law.
+---
 
-Final Release
-
-The production application is available at:
-
-https://ewu-fall-2026.vercel.app/
-
-The project is a complete, deployable, installable PWA with a locally bundled Fall 2026 academic dataset and a tested offline application experience.
+**Live application:** https://ewu-fall-2026.vercel.app/
+**Repository:** https://github.com/aboychandradas/ewu-fall-2026
+**Releases:** https://github.com/aboychandradas/ewu-fall-2026/releases
