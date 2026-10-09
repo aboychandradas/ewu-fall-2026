@@ -116,7 +116,7 @@ export default function CalendarEventSheet({
 
         <SheetHeader className="text-left">
           <div className="mb-4 flex items-center justify-between gap-3">
-            <span className="flex items-center gap-2 rounded-full bg-black/[0.045] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-neutral-500">
+            <span className="flex items-center gap-2 rounded-full bg-black/4.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
               <Icon size={13} />
               {getCategoryLabel(
                 event.type,
@@ -136,7 +136,7 @@ export default function CalendarEventSheet({
               onClick={() =>
                 onOpenChange(false)
               }
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/[0.045] text-neutral-500 outline-none focus-visible:ring-2 focus-visible:ring-black/15"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/4.5 text-neutral-500 outline-none focus-visible:ring-2 focus-visible:ring-black/15"
               aria-label="Close event details"
             >
               <X size={17} />
@@ -179,7 +179,7 @@ export default function CalendarEventSheet({
                   Event status
                 </p>
 
-                <p className="mt-2 text-xl font-semibold tracking-[-0.025em] text-white">
+                <p className="mt-2 text-xl font-semibold tracking-tight text-white">
                   {getAcademicEventStateLabel(
                     state,
                   )}
@@ -213,7 +213,7 @@ export default function CalendarEventSheet({
             className="glass rounded-[28px] p-4"
           >
             <div className="flex items-center gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/[0.045]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/4.5">
                 <CalendarDays size={19} />
               </div>
 
@@ -247,7 +247,7 @@ export default function CalendarEventSheet({
             className="glass rounded-[28px] p-4"
           >
             <div className="flex items-center gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/[0.045]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/4.5">
                 <Clock3 size={19} />
               </div>
 
@@ -280,7 +280,7 @@ export default function CalendarEventSheet({
             className="glass rounded-[28px] p-4"
           >
             <div className="flex items-center gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/[0.045]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/4.5">
                 <CheckCircle2 size={19} />
               </div>
 

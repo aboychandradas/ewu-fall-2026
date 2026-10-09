@@ -106,7 +106,7 @@ export default function RoutineClassCard({
     >
       {isCurrent && (
         <>
-          <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-blue-400/[0.16] blur-3xl" />
+          <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-blue-400/16 blur-3xl" />
 
           <div className="absolute -bottom-20 left-1/3 h-40 w-40 rounded-full bg-white/[0.035] blur-3xl" />
         </>
@@ -114,7 +114,7 @@ export default function RoutineClassCard({
 
       <div className="relative p-5">
         <div className="flex gap-4">
-          <div className="w-[78px] shrink-0">
+          <div className="w-19.5 shrink-0">
             <p
               className={[
                 "text-[15px] font-semibold tracking-[-0.015em]",
@@ -147,10 +147,10 @@ export default function RoutineClassCard({
               className={[
                 "mt-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.08em]",
                 isCurrent
-                  ? "bg-white/[0.08] text-blue-300"
+                  ? "bg-white/8 text-blue-300"
                   : isPast
-                    ? "bg-black/[0.04] text-neutral-400"
-                    : "bg-black/[0.045] text-neutral-500",
+                    ? "bg-black/4 text-neutral-400"
+                    : "bg-black/4.5 text-neutral-500",
               ].join(" ")}
             >
               {isCurrent ? (

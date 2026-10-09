@@ -154,7 +154,7 @@ export default function Home() {
           <div className="mt-3 h-4 w-40 animate-pulse rounded-full bg-black/6" />
         </div>
 
-        <div className="h-72 animate-pulse rounded-[32px] bg-black/6" />
+        <div className="h-72 animate-pulse rounded-4xl bg-black/6" />
 
         <div className="h-44 animate-pulse rounded-[30px] bg-black/6" />
 
@@ -278,7 +278,7 @@ export default function Home() {
               Today
             </p>
 
-            <h2 className="mt-1 text-xl font-semibold tracking-[-0.025em]">
+            <h2 className="mt-1 text-xl font-semibold tracking-tight">
               Your day
             </h2>
           </div>
@@ -325,7 +325,7 @@ export default function Home() {
                 Fall 2026
               </p>
 
-              <h2 className="mt-1 text-xl font-semibold tracking-[-0.025em]">
+              <h2 className="mt-1 text-xl font-semibold tracking-tight">
                 Semester progress
               </h2>
             </div>

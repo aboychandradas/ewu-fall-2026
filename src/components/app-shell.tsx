@@ -12,6 +12,8 @@ import type { ReactNode } from "react";
 
 import { springSnappy } from "@/lib/motion";
 
+import ConnectionStatus from "@/components/ui/connection-status";
+
 const navigation = [
   {
     href: "/",
@@ -39,6 +41,7 @@ export default function AppShell({
 
   return (
     <div className="app-shell">
+      <ConnectionStatus />
       <main className="mx-auto min-h-svh w-full max-w-130 px-5 pb-32 pt-6 sm:px-7">
         {children}
       </main>
@@ -65,7 +68,7 @@ export default function AppShell({
                     <motion.div
                       layoutId="active-tab"
                       transition={springSnappy}
-                      className="absolute inset-0 rounded-[22px] bg-black/[0.055]"
+                      className="absolute inset-0 rounded-[22px] bg-black/5.5"
                     />
                   )}
 

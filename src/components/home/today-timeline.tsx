@@ -135,7 +135,7 @@ export default function TodayTimeline({
               Today
             </p>
 
-            <h2 className="mt-1 text-xl font-semibold tracking-[-0.025em]">
+            <h2 className="mt-1 text-xl font-semibold tracking-tight">
               Schedule timeline
             </h2>
           </div>
@@ -151,7 +151,7 @@ export default function TodayTimeline({
 
       <div className="relative px-5 pb-5">
         <div
-          className="pointer-events-none absolute bottom-5 left-[88px] top-0 w-px bg-black/7"
+          className="pointer-events-none absolute bottom-5 left-22 top-0 w-px bg-black/7"
           aria-hidden="true"
         />
 
@@ -232,7 +232,7 @@ export default function TodayTimeline({
                   className={[
                     "rounded-2xl px-3 py-3 transition",
                     current
-                      ? "bg-blue-500/[0.055]"
+                      ? "bg-blue-500/5.5"
                       : "",
                   ].join(" ")}
                 >
@@ -297,7 +297,7 @@ export default function TodayTimeline({
             duration: 0.5,
             ease: "easeOut",
           }}
-          className="pointer-events-none absolute left-[81px] right-5 flex items-center"
+          className="pointer-events-none absolute left-20.25 right-5 flex items-center"
           aria-hidden="true"
         >
           <div className="h-px flex-1 bg-blue-500/40" />

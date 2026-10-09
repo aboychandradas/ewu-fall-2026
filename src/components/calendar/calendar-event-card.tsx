@@ -122,10 +122,10 @@ export default function CalendarEventCard({
             className={[
               "flex h-12 w-12 shrink-0 items-center justify-center rounded-[18px]",
               featured
-                ? "border border-white/10 bg-white/[0.08] text-white"
+                ? "border border-white/10 bg-white/8 text-white"
                 : state === "active"
                   ? "bg-blue-500/10 text-blue-600"
-                  : "bg-black/[0.045] text-neutral-600",
+                  : "bg-black/4.5 text-neutral-600",
             ].join(" ")}
           >
             <Icon size={20} />
@@ -162,7 +162,7 @@ export default function CalendarEventCard({
 
             <h3
               className={[
-                "mt-2 font-semibold leading-snug tracking-[-0.025em]",
+                "mt-2 font-semibold leading-snug tracking-tight",
                 featured
                   ? "text-[21px] text-white"
                   : "text-[17px] text-neutral-950",
@@ -211,7 +211,7 @@ export default function CalendarEventCard({
                   {countdown.label}
                 </p>
 
-                <p className="mt-2 font-mono text-[29px] font-semibold tracking-[-0.05em] tabular-nums text-white sm:text-[34px]">
+                <p className="mt-2 font-mono text-[29px] font-semibold tracking-tighter tabular-nums text-white sm:text-[34px]">
                   {countdown.value}
                 </p>
               </div>
@@ -250,7 +250,7 @@ export default function CalendarEventCard({
         )}
 
         {!featured && (
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-black/[0.045] pt-3">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-black/4.5 pt-3">
             <span className="text-[11px] font-medium text-neutral-400">
               {getAcademicEventStateLabel(
                 state,

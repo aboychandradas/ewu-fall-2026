@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 
 import {
-  dayLabels,
   routine,
   type ClassSession,
   type DayCode,
@@ -28,7 +27,6 @@ import {
 
 import {
   getClassesForDay,
-  getCurrentClass,
   getCurrentDayCode,
   getDayName,
   getSessionState,
@@ -98,17 +96,6 @@ export default function RoutinePage() {
         routine,
       ),
     [effectiveSelectedDay],
-  );
-
-  const currentClass = useMemo(
-    () =>
-      now
-        ? getCurrentClass(
-            now,
-            routine,
-          )
-        : null,
-    [now],
   );
 
   const selectedIsToday =
@@ -234,7 +221,7 @@ export default function RoutinePage() {
               Weekly schedule
             </p>
 
-            <h1 className="mt-2 text-[38px] font-semibold tracking-[-0.05em] text-neutral-950">
+            <h1 className="mt-2 text-[38px] font-semibold tracking-tighter text-neutral-950">
               Routine
             </h1>
           </div>
@@ -313,7 +300,7 @@ export default function RoutinePage() {
                 : "Selected day"}
             </p>
 
-            <h2 className="mt-1 text-xl font-semibold tracking-[-0.025em]">
+            <h2 className="mt-1 text-xl font-semibold tracking-tight">
               {getDayName(
                 effectiveSelectedDay,
               )}
