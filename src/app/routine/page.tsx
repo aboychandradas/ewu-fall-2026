@@ -1,9 +1,21 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
-import { useMemo, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+} from "motion/react";
+
+import {
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent,
+} from "react";
+
 import {
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   Sparkles,
 } from "lucide-react";
 
@@ -15,18 +27,48 @@ import {
 
 import {
   getClassesForDay,
-  getCurrentClass,
   getCurrentDayCode,
   getDayName,
+  getSessionState,
 } from "@/lib/schedule";
 
 import DaySelector from "@/components/routine/day-selector";
-import RoutineClassCard from "@/components/routine/routine-class-card";
+import RoutineClassCard, {
+  type RoutineCardState,
+} from "@/components/routine/routine-class-card";
 import ClassDetailSheet from "@/components/routine/class-detail-sheet";
-import { useNow } from "@/lib/use-now";
+
+import { useLiveNow } from "@/lib/use-live-now";
+
+const dayOrder: DayCode[] = [
+  "S",
+  "M",
+  "T",
+  "W",
+  "R",
+  "F",
+  "A",
+];
+
+const dayContentVariants = {
+  initial: (direction: number) => ({
+    opacity: 0,
+    x: direction >= 0 ? 18 : -18,
+  }),
+
+  animate: {
+    opacity: 1,
+    x: 0,
+  },
+
+  exit: (direction: number) => ({
+    opacity: 0,
+    x: direction >= 0 ? -18 : 18,
+  }),
+};
 
 export default function RoutinePage() {
-  const now = useNow();
+  const now = useLiveNow();
 
   const today: DayCode = now
     ? getCurrentDayCode(now)
@@ -37,6 +79,12 @@ export default function RoutinePage() {
 
   const [selectedClass, setSelectedClass] =
     useState<ClassSession | null>(null);
+
+  const [direction, setDirection] =
+    useState(0);
+
+  const pointerStartX =
+    useRef<number | null>(null);
 
   const effectiveSelectedDay =
     selectedDay ?? today;
@@ -50,17 +98,83 @@ export default function RoutinePage() {
     [effectiveSelectedDay],
   );
 
-  const currentClass = useMemo(
-    () =>
-      now
-        ? getCurrentClass(now, routine)
-        : null,
-    [now],
-  );
-
   const selectedIsToday =
     now !== null &&
     effectiveSelectedDay === today;
+
+  function selectDay(day: DayCode) {
+    if (day === effectiveSelectedDay) {
+      return;
+    }
+
+    const currentIndex =
+      dayOrder.indexOf(
+        effectiveSelectedDay,
+      );
+
+    const nextIndex =
+      dayOrder.indexOf(day);
+
+    setDirection(
+      nextIndex > currentIndex
+        ? 1
+        : -1,
+    );
+
+    setSelectedDay(day);
+  }
+
+  function moveDay(step: number) {
+    const currentIndex =
+      dayOrder.indexOf(
+        effectiveSelectedDay,
+      );
+
+    const nextIndex =
+      currentIndex + step;
+
+    if (
+      nextIndex < 0 ||
+      nextIndex >= dayOrder.length
+    ) {
+      return;
+    }
+
+    selectDay(
+      dayOrder[nextIndex],
+    );
+  }
+
+  function handlePointerDown(
+    event: PointerEvent<HTMLDivElement>,
+  ) {
+    pointerStartX.current =
+      event.clientX;
+  }
+
+  function handlePointerUp(
+    event: PointerEvent<HTMLDivElement>,
+  ) {
+    if (
+      pointerStartX.current === null
+    ) {
+      return;
+    }
+
+    const distance =
+      event.clientX -
+      pointerStartX.current;
+
+    pointerStartX.current = null;
+
+    if (Math.abs(distance) < 56) {
+      return;
+    }
+
+    moveDay(
+      distance < 0 ? 1 : -1,
+    );
+  }
 
   if (!now) {
     return (
@@ -73,13 +187,13 @@ export default function RoutinePage() {
           <div className="mt-2 h-4 w-56 animate-pulse rounded-full bg-black/6" />
         </div>
 
-        <div className="h-24 animate-pulse rounded-[28px] bg-black/6" />
+        <div className="h-24 animate-pulse rounded-[30px] bg-black/6" />
 
         <div className="h-7 w-36 animate-pulse rounded-full bg-black/6" />
 
-        <div className="h-32 animate-pulse rounded-[28px] bg-black/6" />
+        <div className="h-36 animate-pulse rounded-[30px] bg-black/6" />
 
-        <div className="h-32 animate-pulse rounded-[28px] bg-black/6" />
+        <div className="h-36 animate-pulse rounded-[30px] bg-black/6" />
       </div>
     );
   }
@@ -101,18 +215,18 @@ export default function RoutinePage() {
           ease: "easeOut",
         }}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-neutral-400">
+            <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-neutral-400">
               Weekly schedule
             </p>
 
-            <h1 className="mt-2 text-[38px] font-semibold tracking-[-0.045em] text-neutral-950">
+            <h1 className="mt-2 text-[38px] font-semibold tracking-tighter text-neutral-950">
               Routine
             </h1>
           </div>
 
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/70 shadow-sm ring-1 ring-black/5">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/70 bg-white/70 shadow-sm backdrop-blur-xl">
             <CalendarDays
               size={19}
               className="text-neutral-600"
@@ -120,9 +234,22 @@ export default function RoutinePage() {
           </div>
         </div>
 
-        <p className="mt-2 text-[15px] text-neutral-500">
-          Fall 2026 · Information Studies
-        </p>
+        <div className="mt-2 flex items-center justify-between gap-4">
+          <p className="text-[15px] text-neutral-500">
+            Fall 2026 · Information
+            Studies
+          </p>
+
+          <span className="font-mono text-xs font-semibold tabular-nums text-neutral-400">
+            {new Intl.DateTimeFormat(
+              "en-US",
+              {
+                hour: "numeric",
+                minute: "2-digit",
+              },
+            ).format(now)}
+          </span>
+        </div>
       </motion.header>
 
       {/* DAY SELECTOR */}
@@ -143,31 +270,31 @@ export default function RoutinePage() {
         <DaySelector
           selectedDay={effectiveSelectedDay}
           today={today}
-          onChange={(day) =>
-            setSelectedDay(day)
-          }
+          onChange={selectDay}
         />
       </motion.div>
 
       {/* DAY HEADING */}
-      <motion.div
-        key={effectiveSelectedDay}
-        initial={{
-          opacity: 0,
-          y: 8,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        transition={{
-          duration: 0.3,
-        }}
-        className="px-1"
+      <AnimatePresence
+        mode="wait"
+        initial={false}
       >
-        <div className="flex items-end justify-between">
+        <motion.div
+          key={effectiveSelectedDay}
+          variants={dayContentVariants}
+          custom={direction}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={{
+            type: "spring",
+            stiffness: 340,
+            damping: 30,
+          }}
+          className="flex items-end justify-between px-1"
+        >
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-400">
               {selectedIsToday
                 ? "Today"
                 : "Selected day"}
@@ -180,112 +307,172 @@ export default function RoutinePage() {
             </h2>
           </div>
 
-          {selectedIsToday && (
-            <span className="rounded-full bg-blue-500/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-blue-600">
-              Today
-            </span>
-          )}
-        </div>
-      </motion.div>
+          <div className="flex items-center gap-2">
+            <motion.button
+              type="button"
+              whileTap={{
+                scale: 0.9,
+              }}
+              onClick={() =>
+                moveDay(-1)
+              }
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-neutral-500 outline-none focus-visible:ring-2 focus-visible:ring-black/15"
+              aria-label="Previous day"
+            >
+              <ChevronLeft size={16} />
+            </motion.button>
+
+            {selectedIsToday && (
+              <span className="rounded-full bg-blue-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-600">
+                Today
+              </span>
+            )}
+
+            <motion.button
+              type="button"
+              whileTap={{
+                scale: 0.9,
+              }}
+              onClick={() =>
+                moveDay(1)
+              }
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-neutral-500 outline-none focus-visible:ring-2 focus-visible:ring-black/15"
+              aria-label="Next day"
+            >
+              <ChevronRight size={16} />
+            </motion.button>
+          </div>
+        </motion.div>
+      </AnimatePresence>
 
       {/* SCHEDULE */}
-      <div className="space-y-3">
-        <AnimatePresence mode="wait">
-          {classes.length > 0 ? (
-            <motion.div
-              key={effectiveSelectedDay}
-              initial={{
-                opacity: 0,
-                y: 8,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              exit={{
-                opacity: 0,
-                y: -8,
-              }}
-              transition={{
-                duration: 0.28,
-              }}
-              className="space-y-3"
-            >
-              {classes.map(
-                (session, index) => (
-                  <motion.div
-                    key={session.id}
-                    initial={{
-                      opacity: 0,
-                      y: 10,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    transition={{
-                      duration: 0.35,
-                      delay: index * 0.06,
-                    }}
-                  >
-                    <RoutineClassCard
-                      session={session}
-                      isCurrent={
-                        selectedIsToday &&
-                        currentClass?.id ===
-                          session.id
-                      }
-                      onClick={() =>
-                        setSelectedClass(
+      <div
+        style={{
+          touchAction: "pan-y",
+        }}
+        onPointerDown={
+          handlePointerDown
+        }
+        onPointerUp={handlePointerUp}
+        onPointerCancel={() => {
+          pointerStartX.current =
+            null;
+        }}
+      >
+        <AnimatePresence
+          mode="wait"
+          initial={false}
+          custom={direction}
+        >
+          <motion.div
+            key={effectiveSelectedDay}
+            variants={dayContentVariants}
+            custom={direction}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 30,
+            }}
+            className="space-y-3"
+          >
+            {classes.length > 0 ? (
+              classes.map(
+                (session, index) => {
+                  const state: RoutineCardState =
+                    selectedIsToday
+                      ? getSessionState(
+                          now,
                           session,
                         )
-                      }
-                    />
-                  </motion.div>
-                ),
-              )}
-            </motion.div>
-          ) : (
-            <motion.div
-              key={`empty-${effectiveSelectedDay}`}
-              initial={{
-                opacity: 0,
-                scale: 0.98,
-              }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-              }}
-              exit={{
-                opacity: 0,
-                scale: 0.98,
-              }}
-              transition={{
-                duration: 0.3,
-              }}
-              className="glass rounded-[30px] p-6"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black/5">
-                <Sparkles
-                  size={20}
-                  className="text-neutral-500"
-                />
-              </div>
+                      : "scheduled";
 
-              <h3 className="mt-5 text-xl font-semibold tracking-[-0.02em]">
-                No classes today
-              </h3>
+                  return (
+                    <motion.div
+                      key={session.id}
+                      initial={{
+                        opacity: 0,
+                        y: 10,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 28,
+                        delay:
+                          index * 0.055,
+                      }}
+                    >
+                      <RoutineClassCard
+                        session={session}
+                        state={state}
+                        now={now}
+                        isToday={
+                          selectedIsToday
+                        }
+                        onClick={() =>
+                          setSelectedClass(
+                            session,
+                          )
+                        }
+                      />
+                    </motion.div>
+                  );
+                },
+              )
+            ) : (
+              <motion.div
+                key={`empty-${effectiveSelectedDay}`}
+                initial={{
+                  opacity: 0,
+                  scale: 0.98,
+                }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.98,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 28,
+                }}
+                className="glass rounded-[30px] p-6"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black/5">
+                  <Sparkles
+                    size={20}
+                    className="text-neutral-500"
+                  />
+                </div>
 
-              <p className="mt-1.5 max-w-70 text-sm leading-6 text-neutral-500">
-                Nothing is scheduled for this
-                day. Enjoy the free time.
-              </p>
-            </motion.div>
-          )}
+                <h3 className="mt-5 text-xl font-semibold tracking-[-0.02em]">
+                  No classes
+                </h3>
+
+                <p className="mt-1.5 max-w-70 text-sm leading-6 text-neutral-500">
+                  Nothing is scheduled
+                  for{" "}
+                  {getDayName(
+                    effectiveSelectedDay,
+                  ).toLowerCase()}
+                  .
+                </p>
+              </motion.div>
+            )}
+          </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* DAY CODE FOOTER */}
+      {/* FOOTER */}
       <motion.div
         initial={{
           opacity: 0,
@@ -299,16 +486,18 @@ export default function RoutinePage() {
         className="px-1 pt-1"
       >
         <p className="text-center text-[11px] leading-5 text-neutral-400">
-          S · Sunday &nbsp; M · Monday &nbsp;
-          T · Tuesday &nbsp; W · Wednesday &nbsp;
-          R · Thursday
+          S · Sunday &nbsp; M · Monday
+          &nbsp; T · Tuesday &nbsp; W ·
+          Wednesday &nbsp; R · Thursday
         </p>
       </motion.div>
 
-      {/* CLASS DETAIL SHEET */}
+      {/* DETAIL SHEET */}
       <ClassDetailSheet
         session={selectedClass}
         open={selectedClass !== null}
+        now={now}
+        isToday={selectedIsToday}
         onOpenChange={(open) => {
           if (!open) {
             setSelectedClass(null);

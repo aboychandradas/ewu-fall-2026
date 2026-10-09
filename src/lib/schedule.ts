@@ -24,7 +24,14 @@ const dayNameMap: Record<DayCode, string> = {
   A: "Saturday",
 };
 
-export function getCurrentDayCode(date = new Date()): DayCode {
+export type SessionState =
+  | "past"
+  | "current"
+  | "upcoming";
+
+export function getCurrentDayCode(
+  date = new Date(),
+): DayCode {
   return dayCodeMap[date.getDay()];
 }
 
@@ -33,27 +40,200 @@ export function getDayName(day: DayCode) {
 }
 
 export function formatTime(time: string) {
-  const [hourString, minute] = time.split(":");
+  const [hourString, minute] =
+    time.split(":");
+
   const hour = Number(hourString);
 
-  const suffix = hour >= 12 ? "PM" : "AM";
-  const displayHour = hour % 12 || 12;
+  const suffix =
+    hour >= 12 ? "PM" : "AM";
+
+  const displayHour =
+    hour % 12 || 12;
 
   return `${displayHour}:${minute} ${suffix}`;
 }
 
 function timeToMinutes(time: string) {
-  const [hours, minutes] = time.split(":").map(Number);
+  const [hours, minutes] =
+    time.split(":").map(Number);
+
   return hours * 60 + minutes;
 }
 
-function dateAtTime(date: Date, time: string) {
+function dateAtTime(
+  date: Date,
+  time: string,
+) {
   const result = new Date(date);
-  const [hours, minutes] = time.split(":").map(Number);
 
-  result.setHours(hours, minutes, 0, 0);
+  const [hours, minutes] =
+    time.split(":").map(Number);
+
+  result.setHours(
+    hours,
+    minutes,
+    0,
+    0,
+  );
 
   return result;
+}
+
+export function getSessionStart(
+  date: Date,
+  session: ClassSession,
+) {
+  return dateAtTime(
+    date,
+    session.start,
+  );
+}
+
+export function getSessionEnd(
+  date: Date,
+  session: ClassSession,
+) {
+  return dateAtTime(
+    date,
+    session.end,
+  );
+}
+
+export function getSessionState(
+  now: Date,
+  session: ClassSession,
+): SessionState {
+  const start = getSessionStart(
+    now,
+    session,
+  );
+
+  const end = getSessionEnd(
+    now,
+    session,
+  );
+
+  if (now < start) {
+    return "upcoming";
+  }
+
+  if (now >= start && now < end) {
+    return "current";
+  }
+
+  return "past";
+}
+
+export function getSessionProgress(
+  now: Date,
+  session: ClassSession,
+) {
+  const start = getSessionStart(
+    now,
+    session,
+  );
+
+  const end = getSessionEnd(
+    now,
+    session,
+  );
+
+  const duration =
+    end.getTime() -
+    start.getTime();
+
+  if (duration <= 0) {
+    return 0;
+  }
+
+  if (now <= start) {
+    return 0;
+  }
+
+  if (now >= end) {
+    return 100;
+  }
+
+  const elapsed =
+    now.getTime() -
+    start.getTime();
+
+  return Math.min(
+    100,
+    Math.max(
+      0,
+      (elapsed / duration) * 100,
+    ),
+  );
+}
+
+export function getSecondsUntilStart(
+  now: Date,
+  session: ClassSession,
+) {
+  const start = getSessionStart(
+    now,
+    session,
+  );
+
+  return Math.max(
+    0,
+    Math.floor(
+      (start.getTime() -
+        now.getTime()) /
+        1000,
+    ),
+  );
+}
+
+export function getSecondsUntilEnd(
+  now: Date,
+  session: ClassSession,
+) {
+  const end = getSessionEnd(
+    now,
+    session,
+  );
+
+  return Math.max(
+    0,
+    Math.floor(
+      (end.getTime() -
+        now.getTime()) /
+        1000,
+    ),
+  );
+}
+
+export function formatDuration(
+  totalSeconds: number,
+) {
+  const safeSeconds = Math.max(
+    0,
+    Math.floor(totalSeconds),
+  );
+
+  const hours = Math.floor(
+    safeSeconds / 3600,
+  );
+
+  const minutes = Math.floor(
+    (safeSeconds % 3600) / 60,
+  );
+
+  const seconds =
+    safeSeconds % 60;
+
+  return [
+    hours,
+    minutes,
+    seconds,
+  ]
+    .map((value) =>
+      String(value).padStart(2, "0"),
+    )
+    .join(":");
 }
 
 export function getClassesForDay(
@@ -61,7 +241,10 @@ export function getClassesForDay(
   sessions: ClassSession[] = routine,
 ) {
   return sessions
-    .filter((session) => session.day === day)
+    .filter(
+      (session) =>
+        session.day === day,
+    )
     .sort(
       (a, b) =>
         timeToMinutes(a.start) -
@@ -73,22 +256,30 @@ export function getClassesForDate(
   date: Date,
   sessions: ClassSession[] = routine,
 ) {
-  return getClassesForDay(getCurrentDayCode(date), sessions);
+  return getClassesForDay(
+    getCurrentDayCode(date),
+    sessions,
+  );
 }
 
 export function getCurrentClass(
   now: Date,
   sessions: ClassSession[] = routine,
 ) {
-  const todaysClasses = getClassesForDate(now, sessions);
+  const todaysClasses =
+    getClassesForDate(
+      now,
+      sessions,
+    );
 
   return (
-    todaysClasses.find((session) => {
-      const start = dateAtTime(now, session.start);
-      const end = dateAtTime(now, session.end);
-
-      return now >= start && now < end;
-    }) ?? null
+    todaysClasses.find(
+      (session) =>
+        getSessionState(
+          now,
+          session,
+        ) === "current",
+    ) ?? null
   );
 }
 
@@ -96,22 +287,30 @@ export function getNextClass(
   now: Date,
   sessions: ClassSession[] = routine,
 ) {
-  for (let offset = 0; offset < 8; offset += 1) {
-    const candidateDate = new Date(now);
+  for (
+    let offset = 0;
+    offset < 8;
+    offset += 1
+  ) {
+    const candidateDate =
+      new Date(now);
+
     candidateDate.setDate(
       now.getDate() + offset,
     );
 
-    const classes = getClassesForDate(
-      candidateDate,
-      sessions,
-    );
+    const classes =
+      getClassesForDate(
+        candidateDate,
+        sessions,
+      );
 
     for (const session of classes) {
-      const start = dateAtTime(
-        candidateDate,
-        session.start,
-      );
+      const start =
+        getSessionStart(
+          candidateDate,
+          session,
+        );
 
       if (start > now) {
         return {
@@ -140,9 +339,6 @@ export function getNextAcademicEvent(
   }[],
   now = new Date(),
 ) {
-  const currentDay = new Date(now);
-  currentDay.setHours(0, 0, 0, 0);
-
   return (
     events
       .map((event) => {
@@ -150,9 +346,9 @@ export function getNextAcademicEvent(
           `${event.date}T00:00:00`,
         );
 
-        const end = event.endDate
-          ? new Date(`${event.endDate}T23:59:59`)
-          : start;
+        const end = new Date(
+          `${event.endDate ?? event.date}T23:59:59.999`,
+        );
 
         return {
           event,
@@ -160,7 +356,7 @@ export function getNextAcademicEvent(
           end,
         };
       })
-      .filter(({ end }) => end >= currentDay)
+      .filter(({ end }) => end >= now)
       .sort(
         (a, b) =>
           a.start.getTime() -
@@ -174,7 +370,8 @@ export function formatCountdown(
   now: Date,
 ) {
   const difference =
-    target.getTime() - now.getTime();
+    target.getTime() -
+    now.getTime();
 
   if (difference <= 0) {
     return "Starting now";
@@ -192,7 +389,8 @@ export function formatCountdown(
     totalMinutes / 60,
   );
 
-  const minutes = totalMinutes % 60;
+  const minutes =
+    totalMinutes % 60;
 
   if (hours < 24) {
     if (minutes === 0) {
@@ -202,7 +400,9 @@ export function formatCountdown(
     return `Starts in ${hours}h ${minutes}m`;
   }
 
-  const days = Math.floor(hours / 24);
+  const days = Math.floor(
+    hours / 24,
+  );
 
   if (days === 1) {
     return "Tomorrow";
@@ -215,11 +415,25 @@ export function formatRelativeDate(
   target: Date,
   now: Date,
 ) {
-  const targetDay = new Date(target);
-  targetDay.setHours(0, 0, 0, 0);
+  const targetDay =
+    new Date(target);
 
-  const currentDay = new Date(now);
-  currentDay.setHours(0, 0, 0, 0);
+  targetDay.setHours(
+    0,
+    0,
+    0,
+    0,
+  );
+
+  const currentDay =
+    new Date(now);
+
+  currentDay.setHours(
+    0,
+    0,
+    0,
+    0,
+  );
 
   const difference =
     Math.round(

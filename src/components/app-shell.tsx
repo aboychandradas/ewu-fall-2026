@@ -2,8 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, House, List } from "lucide-react";
+import {
+  CalendarDays,
+  House,
+  List,
+} from "lucide-react";
+import { motion } from "motion/react";
 import type { ReactNode } from "react";
+
+import { springSnappy } from "@/lib/motion";
+
+import ConnectionStatus from "@/components/ui/connection-status";
 
 const navigation = [
   {
@@ -32,35 +41,62 @@ export default function AppShell({
 
   return (
     <div className="app-shell">
-      <main className="mx-auto min-h-svh w-full max-w-130 px-5 pb-28 pt-6 sm:px-7">
+      <ConnectionStatus />
+      <main className="mx-auto min-h-svh w-full max-w-130 px-5 pb-32 pt-6 sm:px-7">
         {children}
       </main>
 
-      <nav className="safe-bottom fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-130 px-4 pb-3">
-        <div className="glass rounded-[28px] px-2 py-2">
+      <nav
+        aria-label="Primary navigation"
+        className="safe-bottom fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-130 px-4 pb-3"
+      >
+        <div className="glass rounded-[30px] p-2">
           <div className="grid grid-cols-3 gap-1">
             {navigation.map((item) => {
               const Icon = item.icon;
-              const active = pathname === item.href;
+              const active =
+                pathname === item.href ||
+                pathname === `${item.href}/`;
 
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-[22px] transition ${
-                    active
-                      ? "bg-black/6 text-black"
-                      : "text-neutral-500 hover:bg-black/3"
-                  }`}
+                  className="relative flex min-h-14 touch-manipulation flex-col items-center justify-center rounded-[22px] text-neutral-500 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-black/15"
                 >
-                  <Icon
-                    size={20}
-                    strokeWidth={active ? 2.4 : 1.9}
-                  />
+                  {active && (
+                    <motion.div
+                      layoutId="active-tab"
+                      transition={springSnappy}
+                      className="absolute inset-0 rounded-[22px] bg-black/5.5"
+                    />
+                  )}
 
-                  <span className="text-[11px] font-medium">
-                    {item.label}
-                  </span>
+                  <motion.div
+                    whileTap={{
+                      scale: 0.92,
+                    }}
+                    transition={springSnappy}
+                    className="relative z-10 flex flex-col items-center justify-center gap-1"
+                  >
+                    <Icon
+                      size={20}
+                      strokeWidth={
+                        active ? 2.3 : 1.85
+                      }
+                    />
+
+                    <span
+                      className={[
+                        "text-[11px] font-semibold tracking-[-0.01em]",
+                        active
+                          ? "text-neutral-950"
+                          : "text-neutral-500",
+                      ].join(" ")}
+                    >
+                      {item.label}
+                    </span>
+                  </motion.div>
                 </Link>
               );
             })}
