@@ -339,16 +339,6 @@ export function getNextAcademicEvent(
   }[],
   now = new Date(),
 ) {
-  const currentDay =
-    new Date(now);
-
-  currentDay.setHours(
-    0,
-    0,
-    0,
-    0,
-  );
-
   return (
     events
       .map((event) => {
@@ -356,11 +346,9 @@ export function getNextAcademicEvent(
           `${event.date}T00:00:00`,
         );
 
-        const end = event.endDate
-          ? new Date(
-              `${event.endDate}T23:59:59`,
-            )
-          : start;
+        const end = new Date(
+          `${event.endDate ?? event.date}T23:59:59.999`,
+        );
 
         return {
           event,
@@ -368,10 +356,7 @@ export function getNextAcademicEvent(
           end,
         };
       })
-      .filter(
-        ({ end }) =>
-          end >= currentDay,
-      )
+      .filter(({ end }) => end >= now)
       .sort(
         (a, b) =>
           a.start.getTime() -

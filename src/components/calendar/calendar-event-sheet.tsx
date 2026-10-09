@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "motion/react";
+
 import {
   BookOpenCheck,
   CalendarDays,
@@ -8,10 +10,21 @@ import {
   GraduationCap,
   PartyPopper,
   Sparkles,
+  Timer,
   X,
 } from "lucide-react";
 
-import type { AcademicEvent } from "@/data/fall-2026";
+import type {
+  AcademicEvent,
+} from "@/data/fall-2026";
+
+import {
+  formatAcademicEventDateRange,
+  formatAcademicEventDuration,
+  getAcademicEventCountdown,
+  getAcademicEventState,
+  getAcademicEventStateLabel,
+} from "@/lib/academic-events";
 
 import {
   Sheet,
@@ -23,6 +36,7 @@ import {
 interface CalendarEventSheetProps {
   event: AcademicEvent | null;
   open: boolean;
+  now: Date;
   onOpenChange: (open: boolean) => void;
 }
 
@@ -36,35 +50,6 @@ const EVENT_ICONS = {
   AcademicEvent["type"],
   typeof CalendarDays
 >;
-
-function formatDateRange(
-  date: string,
-  endDate?: string,
-) {
-  const start = new Date(`${date}T00:00:00`);
-
-  const startText =
-    new Intl.DateTimeFormat("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    }).format(start);
-
-  if (!endDate) {
-    return startText;
-  }
-
-  const end = new Date(`${endDate}T00:00:00`);
-
-  const endText =
-    new Intl.DateTimeFormat("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    }).format(end);
-
-  return `${startText} – ${endText}`;
-}
 
 function getCategoryLabel(
   type: AcademicEvent["type"],
@@ -90,6 +75,7 @@ function getCategoryLabel(
 export default function CalendarEventSheet({
   event,
   open,
+  now,
   onOpenChange,
 }: CalendarEventSheetProps) {
   if (!event) {
@@ -98,6 +84,25 @@ export default function CalendarEventSheet({
 
   const Icon = EVENT_ICONS[event.type];
 
+  const state =
+    getAcademicEventState(
+      event,
+      now,
+    );
+
+  const countdown =
+    getAcademicEventCountdown(
+      event,
+      now,
+    );
+
+  const StateIcon =
+    state === "active"
+      ? Timer
+      : state === "past"
+        ? CheckCircle2
+        : Clock3;
+
   return (
     <Sheet
       open={open}
@@ -105,77 +110,177 @@ export default function CalendarEventSheet({
     >
       <SheetContent
         side="bottom"
-        className="mx-auto max-w-130 rounded-t-4xl border-0 bg-[#f5f5f7] px-5 pb-8 pt-4"
+        className="mx-auto max-h-[88svh] w-full max-w-130 overflow-y-auto rounded-t-[36px] border-0 bg-[#f5f5f7] px-5 pb-9 pt-4"
       >
         <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-black/12" />
 
         <SheetHeader className="text-left">
-          <div className="mb-4 flex items-center justify-between">
-            <span className="flex items-center gap-2 rounded-full bg-black/5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <span className="flex items-center gap-2 rounded-full bg-black/[0.045] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-neutral-500">
               <Icon size={13} />
-              {getCategoryLabel(event.type)}
+              {getCategoryLabel(
+                event.type,
+              )}
             </span>
 
-            <button
+            <motion.button
               type="button"
+              whileTap={{
+                scale: 0.9,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                damping: 28,
+              }}
               onClick={() =>
                 onOpenChange(false)
               }
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-neutral-500 transition active:scale-95"
-              aria-label="Close"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/[0.045] text-neutral-500 outline-none focus-visible:ring-2 focus-visible:ring-black/15"
+              aria-label="Close event details"
             >
               <X size={17} />
-            </button>
+            </motion.button>
           </div>
 
-          <SheetTitle className="text-[28px] font-semibold tracking-[-0.04em] text-neutral-950">
+          <SheetTitle className="text-[29px] font-semibold tracking-[-0.045em] text-neutral-950">
             {event.title}
           </SheetTitle>
+
+          <p className="mt-2 text-sm font-medium text-neutral-500">
+            Fall 2026 · Information Studies
+          </p>
         </SheetHeader>
 
-        <div className="mt-7 space-y-3">
-          <div className="glass rounded-3xl p-4">
-            <div className="flex items-center gap-4">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-black/5">
-                <CalendarDays size={19} />
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 10,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 280,
+            damping: 28,
+          }}
+          className="mt-7"
+        >
+          <div className="premium-hero rounded-[30px] p-5">
+            <div className="flex items-start gap-4">
+              <div className="hero-icon">
+                <StateIcon size={19} />
               </div>
 
-              <div>
-                <p className="text-xs font-medium text-neutral-400">
-                  Date
+              <div className="min-w-0 flex-1">
+                <p className="eyebrow">
+                  Event status
                 </p>
 
-                <p className="mt-1 font-semibold">
-                  {formatDateRange(
-                    event.date,
-                    event.endDate,
+                <p className="mt-2 text-xl font-semibold tracking-[-0.025em] text-white">
+                  {getAcademicEventStateLabel(
+                    state,
                   )}
+                </p>
+
+                <p className="mt-1.5 text-sm text-white/50">
+                  {countdown.label}
+                </p>
+
+                <p className="mt-1 font-mono text-[26px] font-semibold tracking-[-0.04em] tabular-nums text-white">
+                  {countdown.value}
                 </p>
               </div>
             </div>
           </div>
+        </motion.div>
 
-          <div className="glass rounded-3xl p-4">
+        <div className="mt-3 space-y-3">
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 8,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: 0.04,
+            }}
+            className="glass rounded-[28px] p-4"
+          >
             <div className="flex items-center gap-4">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-black/5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/[0.045]">
+                <CalendarDays size={19} />
+              </div>
+
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-neutral-400">
+                  Date
+                </p>
+
+                <p className="mt-1 font-semibold leading-6 text-neutral-900">
+                  {formatAcademicEventDateRange(
+                    event,
+                    true,
+                  )}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 8,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: 0.08,
+            }}
+            className="glass rounded-[28px] p-4"
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/[0.045]">
                 <Clock3 size={19} />
               </div>
 
               <div>
                 <p className="text-xs font-medium text-neutral-400">
-                  Semester
+                  Duration
                 </p>
 
-                <p className="mt-1 font-semibold">
-                  Fall 2026
+                <p className="mt-1 font-semibold text-neutral-900">
+                  {formatAcademicEventDuration(
+                    event,
+                  )}
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="glass rounded-3xl p-4">
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 8,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: 0.12,
+            }}
+            className="glass rounded-[28px] p-4"
+          >
             <div className="flex items-center gap-4">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-black/5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/[0.045]">
                 <CheckCircle2 size={19} />
               </div>
 
@@ -184,15 +289,20 @@ export default function CalendarEventSheet({
                   Category
                 </p>
 
-                <p className="mt-1 font-semibold">
+                <p className="mt-1 font-semibold text-neutral-900">
                   {getCategoryLabel(
                     event.type,
                   )}
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
+
+        <p className="mt-6 text-center text-xs leading-5 text-neutral-400">
+          Personal academic companion ·
+          Fall 2026
+        </p>
       </SheetContent>
     </Sheet>
   );
