@@ -6,6 +6,7 @@ import {
   CalendarDays,
   House,
   List,
+  UserRound,
 } from "lucide-react";
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
@@ -30,6 +31,11 @@ const navigation = [
     label: "Calendar",
     icon: CalendarDays,
   },
+  {
+    href: "/profile",
+    label: "Profile",
+    icon: UserRound,
+  },
 ];
 
 export default function AppShell({
@@ -51,7 +57,7 @@ export default function AppShell({
         className="safe-bottom fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-130 px-4 pb-3"
       >
         <div className="glass rounded-[30px] p-2">
-          <div className="grid grid-cols-3 gap-1">
+          <div className="grid grid-cols-4 gap-1">
             {navigation.map((item) => {
               const Icon = item.icon;
               const active =
@@ -62,7 +68,8 @@ export default function AppShell({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="relative flex min-h-14 touch-manipulation flex-col items-center justify-center rounded-[22px] text-neutral-500 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-black/15"
+                  className="relative flex min-h-14 min-w-0 touch-manipulation flex-col items-center justify-center rounded-[22px] text-neutral-500 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-blue-500/60"
+                  aria-current={active ? "page" : undefined}
                 >
                   {active && (
                     <motion.div

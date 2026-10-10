@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import {
   ArrowRight,
+  CalendarDays,
   Clock3,
   MapPin,
   Sparkles,
@@ -197,6 +198,16 @@ export default function LiveStatusCard({
   }
 
   if (status === "next" && start) {
+    const scheduledForAnotherDay =
+      start.toDateString() !== now.toDateString();
+
+    const scheduledDateLabel =
+      new Intl.DateTimeFormat("en-US", {
+        weekday: "long",
+        month: "short",
+        day: "numeric",
+      }).format(start);
+
     return (
       <motion.section
         initial={{
@@ -219,7 +230,7 @@ export default function LiveStatusCard({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="eyebrow">
-              NEXT CLASS
+              UP NEXT
             </p>
 
             <h2 className="mt-2 text-[34px] font-semibold tracking-tighter">
@@ -237,6 +248,16 @@ export default function LiveStatusCard({
                 {session.room}
               </span>
             </div>
+
+            {scheduledForAnotherDay && (
+              <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/8 px-3 py-1.5 text-xs font-medium text-white/80">
+                <CalendarDays
+                  size={14}
+                  aria-hidden="true"
+                />
+                {scheduledDateLabel}
+              </p>
+            )}
           </div>
 
           <div className="hero-icon">

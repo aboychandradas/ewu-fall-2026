@@ -17,6 +17,8 @@ import {
 
 import LiveStatusCard from "@/components/home/live-status-card";
 import TodayTimeline from "@/components/home/today-timeline";
+import NextClassDayCard from "@/components/home/next-class-day-card";
+import SemesterSelector from "@/components/home/semester-selector";
 import ThemeToggle from "@/components/ui/theme-toggle";
 
 import {
@@ -166,31 +168,22 @@ export default function Home() {
     );
   }
 
-  const isCurrent = Boolean(currentClass);
-
-  const isNextToday = Boolean(
-    !currentClass &&
-      nextClass &&
-      new Date(nextClass.start).toDateString() ===
-        now.toDateString(),
-  );
-
   const status: "current" | "next" | "done" =
-    isCurrent
-      ? "current"
-      : isNextToday
-        ? "next"
-        : "done";
+  currentClass
+    ? "current"
+    : nextClass
+      ? "next"
+      : "done";
 
-  const session =
-    currentClass ??
-    nextClass?.session ??
-    null;
+const session =
+  currentClass ??
+  nextClass?.session ??
+  null;
 
-  const nextStart =
-    status === "next"
-      ? nextClass?.start
-      : undefined;
+const nextStart =
+  !currentClass
+    ? nextClass?.start
+    : undefined;
 
   return (
     <div className="space-y-7 pb-3">
@@ -223,11 +216,7 @@ export default function Home() {
 
           <div className="flex shrink-0 items-center gap-2">
             <ThemeToggle />
-            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/70 bg-white/70 shadow-sm backdrop-blur-xl">
-              <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-neutral-700">
-                9TH
-              </span>
-            </div>
+            <SemesterSelector />
           </div>
         </div>
 
@@ -279,13 +268,13 @@ export default function Home() {
         >
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-neutral-400">
-              Today
+              {todayClasses.length > 0 ? "TODAY" : "UP NEXT"}
             </p>
 
-            <h2 className="mt-1 text-xl font-semibold tracking-tight">
-              Your day
-            </h2>
-          </div>
+          <h2 className="mt-1 text-xl font-semibold tracking-tight text-neutral-950">
+            {todayClasses.length > 0 ? "Your day" : "Next class day"}
+          </h2>
+        </div>
 
           <Link
             href="/routine/"
@@ -299,11 +288,37 @@ export default function Home() {
           </Link>
         </motion.div>
 
-        <TodayTimeline
-          sessions={todayClasses}
-          now={now}
-          currentClassId={currentClass?.id}
-        />
+        {todayClasses.length > 0 ? (
+  <TodayTimeline
+    sessions={todayClasses}
+    now={now}
+    currentClassId={currentClass?.id}
+  />
+) : nextClass ? (
+  <NextClassDayCard
+    date={nextClass.start}
+    sessions={getClassesForDate(nextClass.start)}
+  />
+) : (
+  <div className="glass rounded-[30px] p-5">
+    <p className="font-semibold text-neutral-950">
+      No upcoming class found
+    </p>
+
+    <p className="mt-1 text-sm leading-6 text-neutral-500">
+      There are no future sessions in the current routine.
+      Check your schedule for updates.
+    </p>
+
+    <Link
+      href="/routine/"
+      className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-black/5 px-4 text-sm font-semibold text-neutral-950 outline-none transition-colors hover:bg-black/10 focus-visible:ring-2 focus-visible:ring-blue-500/50"
+    >
+      Review routine
+      <ArrowRight size={15} aria-hidden="true" />
+    </Link>
+  </div>
+)}
       </section>
 
       {/* SEMESTER PROGRESS */}
