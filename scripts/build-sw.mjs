@@ -24,23 +24,87 @@ const {
   GET,
 } = createSerwistRoute({
   additionalPrecacheEntries: [
-    {
-      url: "/",
-      revision,
-    },
-    {
-      url: "/routine/",
-      revision,
-    },
-    {
-      url: "/calendar/",
-      revision,
-    },
-    {
-      url: "/offline/",
-      revision,
-    },
-  ],
+  // Home: HTML document and Next.js navigation payload.
+  {
+    url: "/",
+    revision,
+  },
+  {
+    url: "/index.txt",
+    revision,
+  },
+
+  // Routine.
+  {
+    url: "/routine/",
+    revision,
+  },
+  {
+    url: "/routine/index.txt",
+    revision,
+  },
+
+  // Calendar.
+  {
+    url: "/calendar/",
+    revision,
+  },
+  {
+    url: "/calendar/index.txt",
+    revision,
+  },
+
+  // Profile.
+  {
+    url: "/profile/",
+    revision,
+  },
+  {
+    url: "/profile/index.txt",
+    revision,
+  },
+
+  // 10th-semester noticeboard.
+  {
+    url: "/semester/10th/",
+    revision,
+  },
+  {
+    url: "/semester/10th/index.txt",
+    revision,
+  },
+
+  // 11th-semester noticeboard.
+  {
+    url: "/semester/11th/",
+    revision,
+  },
+  {
+    url: "/semester/11th/index.txt",
+    revision,
+  },
+
+  // 12th-semester noticeboard.
+  {
+    url: "/semester/12th/",
+    revision,
+  },
+  {
+    url: "/semester/12th/index.txt",
+    revision,
+  },
+
+  // Offline fallback.
+  {
+    url: "/offline/",
+    revision,
+  },
+  {
+    url: "/offline/index.txt",
+    revision,
+  },
+],
+
   swSrc: "src/app/sw.ts",
   useNativeEsbuild: true,
 });
