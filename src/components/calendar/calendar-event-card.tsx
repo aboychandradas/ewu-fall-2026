@@ -107,7 +107,7 @@ export default function CalendarEventCard({
         damping: 28,
       }}
       className={[
-        "group relative w-full overflow-hidden rounded-[30px] text-left outline-none focus-visible:ring-2 focus-visible:ring-black/15",
+        "group relative w-full overflow-hidden rounded-[30px] text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-500/70",
         featured
           ? "premium-hero"
           : state === "active"
@@ -125,7 +125,7 @@ export default function CalendarEventCard({
                 ? "border border-white/10 bg-white/8 text-white"
                 : state === "active"
                   ? "bg-blue-500/10 text-blue-600"
-                  : "bg-black/4.5 text-neutral-600",
+                  : "bg-(--card-strong) text-neutral-600",
             ].join(" ")}
           >
             <Icon size={20} />
@@ -191,7 +191,7 @@ export default function CalendarEventCard({
                 "mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
                 state === "active"
                   ? "bg-blue-500/10 text-blue-600"
-                  : "bg-black/[0.035] text-neutral-400",
+                  : "bg-(--card-strong) text-neutral-400",
               ].join(" ")}
             >
               {state === "past" ? (
@@ -250,7 +250,7 @@ export default function CalendarEventCard({
         )}
 
         {!featured && (
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-black/4.5 pt-3">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-(--card-border) pt-3">
             <span className="text-[11px] font-medium text-neutral-400">
               {getAcademicEventStateLabel(
                 state,

@@ -45,7 +45,11 @@ export default function DaySelector({
             <motion.button
               key={day.code}
               type="button"
-              aria-label={`Select ${shortNames[day.code]}`}
+              aria-label={
+                isToday
+                  ? `Select ${shortNames[day.code]}, today`
+                  : `Select ${shortNames[day.code]}`
+              }
               aria-pressed={active}
               onClick={() =>
                 onChange(day.code)
@@ -58,7 +62,7 @@ export default function DaySelector({
                 stiffness: 500,
                 damping: 30,
               }}
-              className="relative min-w-0 touch-manipulation rounded-[22px] px-1 py-3 text-center outline-none focus-visible:ring-2 focus-visible:ring-black/15"
+              className="relative min-w-0 touch-manipulation rounded-[22px] px-1 py-3 text-center outline-none focus-visible:ring-2 focus-visible:ring-blue-500/70"
             >
               {active && (
                 <motion.div
@@ -68,7 +72,7 @@ export default function DaySelector({
                     stiffness: 420,
                     damping: 32,
                   }}
-                  className="absolute inset-0 rounded-[22px] bg-neutral-950 shadow-[0_8px_20px_rgba(0,0,0,0.12)]"
+                  className="absolute inset-0 rounded-[22px] bg-(--foreground) shadow-[0_8px_20px_rgba(0,0,0,0.12)]"
                 />
               )}
 
@@ -77,7 +81,7 @@ export default function DaySelector({
                   className={[
                     "block text-[15px] font-semibold transition-colors",
                     active
-                      ? "text-white"
+                      ? "text-(--background)"
                       : "text-neutral-800",
                   ].join(" ")}
                 >
@@ -90,7 +94,7 @@ export default function DaySelector({
                   className={[
                     "mt-0.5 block text-[9px] font-medium transition-colors",
                     active
-                      ? "text-white/55"
+                      ? "text-(--background)/65"
                       : "text-neutral-400",
                   ].join(" ")}
                 >

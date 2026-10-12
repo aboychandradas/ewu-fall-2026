@@ -66,7 +66,7 @@ export default function NextClassDayCard({
                 duration: 0.3,
                 delay: index * 0.05,
               }}
-              className="flex items-start gap-3 rounded-2xl border border-black/5 bg-white/35 p-3.5"
+              className="flex items-start gap-3 rounded-2xl border border-(--card-border) bg-(--card) p-3.5"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
                 <Clock3 size={18} aria-hidden="true" />

@@ -98,7 +98,7 @@ export default function RoutineClassCard({
       onClick={onClick}
       aria-label={`Open ${session.course} details`}
       className={[
-        "group relative w-full overflow-hidden rounded-[30px] text-left outline-none focus-visible:ring-2 focus-visible:ring-black/15",
+        "group relative w-full overflow-hidden rounded-[30px] text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-500/70",
         isCurrent
           ? "bg-neutral-950 text-white shadow-[0_24px_60px_rgba(0,0,0,0.15)]"
           : "glass",
@@ -147,10 +147,10 @@ export default function RoutineClassCard({
               className={[
                 "mt-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.08em]",
                 isCurrent
-                  ? "bg-white/8 text-blue-300"
+                  ? "bg-white/10 text-blue-300"
                   : isPast
-                    ? "bg-black/4 text-neutral-400"
-                    : "bg-black/4.5 text-neutral-500",
+                    ? "bg-(--card) text-neutral-400"
+                    : "bg-(--card-strong) text-neutral-500"
               ].join(" ")}
             >
               {isCurrent ? (

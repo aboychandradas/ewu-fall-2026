@@ -208,7 +208,7 @@ export default function SemesterSelector() {
     first.focus();
   }
 }}
-              className="glass min-h-0 max-h-[88svh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-t-[28px] border border-white/20 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:rounded-[32px] sm:p-6 sm:pb-6"
+              className="glass min-h-0 max-h-[88svh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-t-[28px] border border-white/20 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:rounded-4xl sm:p-6 sm:pb-6"
             >
               {/* SHEET HEADER */}
               <div className="flex items-start justify-between gap-4">
@@ -299,7 +299,7 @@ export default function SemesterSelector() {
                     <Link
                       href={semester.href}
                       onClick={closeSelector}
-                      className="group flex items-center gap-3 rounded-[24px] border border-black/5 bg-[var(--card)] p-4 text-left shadow-sm outline-none transition-all duration-200 hover:bg-[var(--card-strong)] active:scale-[0.985] active:bg-[var(--card-strong)] focus-visible:ring-2 focus-visible:ring-blue-500/50"
+                      className="group flex items-center gap-3 rounded-3xl border border-black/5 bg-(--card) p-4 text-left shadow-sm outline-none transition-all duration-200 hover:bg-(--card-strong) active:scale-[0.985] active:bg-(--card-strong) focus-visible:ring-2 focus-visible:ring-blue-500/50"
                     >
                       <div
                         className={[
