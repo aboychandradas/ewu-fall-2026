@@ -45,7 +45,11 @@ export default function DaySelector({
             <motion.button
               key={day.code}
               type="button"
-              aria-label={`Select ${shortNames[day.code]}`}
+              aria-label={
+                isToday
+                  ? `Select ${shortNames[day.code]}, today`
+                  : `Select ${shortNames[day.code]}`
+              }
               aria-pressed={active}
               onClick={() =>
                 onChange(day.code)
@@ -58,7 +62,7 @@ export default function DaySelector({
                 stiffness: 500,
                 damping: 30,
               }}
-              className="relative min-w-0 touch-manipulation rounded-[22px] px-1 py-3 text-center outline-none focus-visible:ring-2 focus-visible:ring-black/15"
+              className="relative min-w-0 touch-manipulation rounded-[22px] px-1 py-3 text-center outline-none focus-visible:ring-2 focus-visible:ring-blue-500/70"
             >
               {active && (
                 <motion.div

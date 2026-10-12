@@ -136,7 +136,7 @@ export default function ClassDetailSheet({
               onClick={() =>
                 onOpenChange(false)
               }
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-neutral-500 outline-none focus-visible:ring-2 focus-visible:ring-black/15"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-black/5 text-neutral-500 outline-none focus-visible:ring-2 focus-visible:ring-blue-500/70"
               aria-label="Close"
             >
               <X size={17} />

@@ -98,7 +98,7 @@ export default function RoutineClassCard({
       onClick={onClick}
       aria-label={`Open ${session.course} details`}
       className={[
-        "group relative w-full overflow-hidden rounded-[30px] text-left outline-none focus-visible:ring-2 focus-visible:ring-black/15",
+        "group relative w-full overflow-hidden rounded-[30px] text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-500/70",
         isCurrent
           ? "bg-neutral-950 text-white shadow-[0_24px_60px_rgba(0,0,0,0.15)]"
           : "glass",
