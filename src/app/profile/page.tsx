@@ -59,10 +59,10 @@ export default function ProfilePage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="premium-hero overflow-hidden rounded-[32px] p-6 sm:p-7"
+        className="premium-hero overflow-hidden rounded-4xl p-6 sm:p-7"
       >
         <div className="relative z-10 flex items-center gap-4">
-          <div className="flex h-[68px] w-[68px] shrink-0 items-center justify-center rounded-[24px] border border-white/15 bg-white/10 text-2xl font-semibold tracking-tight text-white shadow-lg shadow-black/10">
+          <div className="flex h-17 w-17 shrink-0 items-center justify-center rounded-3xl border border-white/15 bg-white/10 text-2xl font-semibold tracking-tight text-white shadow-lg shadow-black/10">
             SA
           </div>
 
@@ -198,7 +198,7 @@ export default function ProfilePage() {
         className="glass rounded-[30px] p-5 sm:p-6"
       >
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500/15 to-violet-500/15 text-blue-500">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-blue-500/15 to-violet-500/15 text-blue-500">
             <CalendarDays
               size={21}
               aria-hidden="true"
@@ -258,7 +258,7 @@ export default function ProfilePage() {
               duration: 0.9,
               ease: "easeOut",
             }}
-            className="h-full rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-violet-500"
+            className="h-full rounded-full bg-linear-to-r from-blue-500 via-cyan-400 to-violet-500"
           />
         </div>
 
@@ -300,7 +300,7 @@ export default function ProfilePage() {
           duration: 0.35,
           delay: 0.15,
         }}
-        className="rounded-[26px] border border-violet-500/10 bg-gradient-to-br from-violet-500/5 via-blue-500/5 to-cyan-500/5 p-5"
+        className="rounded-[26px] border border-violet-500/10 bg-linear-to-br from-violet-500/5 via-blue-500/5 to-cyan-500/5 p-5"
       >
         <p className="text-sm font-semibold text-neutral-950">
           Your future is built one step at a time.
