@@ -27,6 +27,7 @@ import {
   getCurrentClass,
   getNextAcademicEvent,
   getNextClass,
+  getSessionState,
 } from "@/lib/schedule";
 
 import { useLiveNow } from "@/lib/use-live-now";
@@ -128,6 +129,27 @@ export default function Home() {
     () => (now ? getNextClass(now) : null),
     [now],
   );
+
+  const hasRemainingClassesToday = now
+  ? todayClasses.some(
+      (session) => getSessionState(now, session) !== "past",
+    )
+  : false;
+
+const tomorrow = now ? new Date(now) : null;
+
+if (tomorrow) {
+  tomorrow.setDate(tomorrow.getDate() + 1);
+}
+
+const nextClassIsTomorrow = Boolean(
+  now &&
+    tomorrow &&
+    nextClass &&
+    nextClass.start.getFullYear() === tomorrow.getFullYear() &&
+    nextClass.start.getMonth() === tomorrow.getMonth() &&
+    nextClass.start.getDate() === tomorrow.getDate(),
+);
 
   const nextEvent = useMemo(
     () =>
@@ -268,11 +290,15 @@ const nextStart =
         >
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-neutral-400">
-              {todayClasses.length > 0 ? "TODAY" : "UP NEXT"}
+              {hasRemainingClassesToday ? "TODAY" : "UP NEXT"}
             </p>
 
           <h2 className="mt-1 text-xl font-semibold tracking-tight text-neutral-950">
-            {todayClasses.length > 0 ? "Your day" : "Next class day"}
+            {hasRemainingClassesToday
+  ? "Your day"
+  : nextClassIsTomorrow
+    ? "Tomorrow"
+    : "Next class day"}
           </h2>
         </div>
 
@@ -288,7 +314,7 @@ const nextStart =
           </Link>
         </motion.div>
 
-        {todayClasses.length > 0 ? (
+        {hasRemainingClassesToday ? (
   <TodayTimeline
     sessions={todayClasses}
     now={now}
