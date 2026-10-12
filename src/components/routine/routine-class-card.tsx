@@ -147,10 +147,10 @@ export default function RoutineClassCard({
               className={[
                 "mt-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.08em]",
                 isCurrent
-                  ? "bg-white/8 text-blue-300"
+                  ? "bg-white/10 text-blue-300"
                   : isPast
-                    ? "bg-black/4 text-neutral-400"
-                    : "bg-black/4.5 text-neutral-500",
+                    ? "bg-(--card) text-neutral-400"
+                    : "bg-(--card-strong) text-neutral-500"
               ].join(" ")}
             >
               {isCurrent ? (

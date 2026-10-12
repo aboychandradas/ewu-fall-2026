@@ -68,7 +68,7 @@ export default function DaySelector({
                     stiffness: 420,
                     damping: 32,
                   }}
-                  className="absolute inset-0 rounded-[22px] bg-neutral-950 shadow-[0_8px_20px_rgba(0,0,0,0.12)]"
+                  className="absolute inset-0 rounded-[22px] bg-(--foreground) shadow-[0_8px_20px_rgba(0,0,0,0.12)]"
                 />
               )}
 
@@ -77,7 +77,7 @@ export default function DaySelector({
                   className={[
                     "block text-[15px] font-semibold transition-colors",
                     active
-                      ? "text-white"
+                      ? "text-(--background)"
                       : "text-neutral-800",
                   ].join(" ")}
                 >
@@ -90,7 +90,7 @@ export default function DaySelector({
                   className={[
                     "mt-0.5 block text-[9px] font-medium transition-colors",
                     active
-                      ? "text-white/55"
+                      ? "text-(--background)/65"
                       : "text-neutral-400",
                   ].join(" ")}
                 >

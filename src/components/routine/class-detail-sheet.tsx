@@ -104,7 +104,7 @@ export default function ClassDetailSheet({
     >
       <SheetContent
         side="bottom"
-        className="mx-auto max-w-130 rounded-t-[36px] border-0 bg-[#f5f5f7] px-5 pb-9 pt-4"
+        className="mx-auto max-w-130 rounded-t-[36px] border-0 bg-(--background) px-5 pb-9 pt-4"
       >
         <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-black/12" />
 
