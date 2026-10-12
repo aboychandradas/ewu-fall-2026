@@ -155,7 +155,7 @@ export default function CalendarPage() {
             </h1>
           </div>
 
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/70 bg-white/70 shadow-sm backdrop-blur-xl">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-(--card-border) bg-(--card) shadow-sm backdrop-blur-xl">
             <CalendarDays
               size={19}
               className="text-neutral-600"
@@ -265,7 +265,7 @@ export default function CalendarPage() {
                     )}
                   </h2>
 
-                  <div className="h-px flex-1 bg-black/[0.07]" />
+                  <div className="h-px flex-1 bg-(--card-border)" />
 
                   <span className="text-[10px] font-semibold text-neutral-400">
                     {events.length}{" "}
